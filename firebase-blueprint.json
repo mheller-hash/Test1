@@ -1,0 +1,122 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile data",
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "credits": { "type": "number", "description": "Available credits for generating videos (server managed)" },
+        "plan": { "type": "string" },
+        "videosCreatedCount": { "type": "number" },
+        "estimatedViews": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "credits", "createdAt"]
+    },
+    "CreditTransaction": {
+      "title": "CreditTransaction",
+      "description": "Audit log for credits charges and refunds",
+      "type": "object",
+      "properties": {
+        "amount": { "type": "number" },
+        "type": { "type": "string" },
+        "generationId": { "type": "string" },
+        "model": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["amount", "type", "createdAt", "status"]
+    },
+    "Generation": {
+      "title": "Generation",
+      "description": "Server-side video generation record with idempotency and ownership tracking",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "cost": { "type": "number" },
+        "status": { "type": "string" },
+        "modelUsed": { "type": "string" },
+        "operationName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "cost", "status"]
+    },
+    "Folder": {
+      "title": "Folder",
+      "description": "User folders for files",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "createdAt"]
+    },
+    "File": {
+      "title": "File",
+      "description": "User file metadata",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "folderId": { "type": "string" },
+        "size": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "createdAt"]
+    },
+    "Note": {
+      "title": "Note",
+      "description": "User notes",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "createdAt"]
+    },
+    "TeamMember": {
+      "title": "TeamMember",
+      "description": "User team members",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "createdAt"]
+    },
+    "Video": {
+      "title": "Video",
+      "description": "User generated videos",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "templateId": { "type": "string" },
+        "templateName": { "type": "string" },
+        "thumbnailUrl": { "type": "string" },
+        "videoUrl": { "type": "string" },
+        "modelUsed": { "type": "string" },
+        "aspectRatio": { "type": "string" },
+        "durationSec": { "type": "number" },
+        "status": { "type": "string" },
+        "creditUsed": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "createdAtMillis": { "type": "number" }
+      },
+      "required": ["title", "templateId", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": { "schema": "User", "description": "User profile document" },
+    "/users/{uid}/creditTransactions/{transactionId}": { "schema": "CreditTransaction", "description": "Credit transaction ledger" },
+    "/users/{uid}/generations/{generationId}": { "schema": "Generation", "description": "Server-side video generation record" },
+    "/users/{uid}/folders/{folderId}": { "schema": "Folder", "description": "User folders" },
+    "/users/{uid}/files/{fileId}": { "schema": "File", "description": "User files" },
+    "/users/{uid}/notes/{noteId}": { "schema": "Note", "description": "User notes" },
+    "/users/{uid}/teamMembers/{memberId}": { "schema": "TeamMember", "description": "User team members" },
+    "/users/{uid}/videos/{videoId}": { "schema": "Video", "description": "User generated videos" }
+  }
+}

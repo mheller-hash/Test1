@@ -1,0 +1,68 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helpers
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(uid) { return isSignedIn() && request.auth.uid == uid; }
+
+    // Operations mapping collection - Managed purely server-side by Admin SDK
+    match /operations/{opId} {
+      allow read, write: if false;
+    }
+
+    // Users
+    match /users/{uid} {
+      // User can read their own profile, credits, and history.
+      allow read: if isOwner(uid);
+      
+      // User documents and initial credits are created solely by the backend via Firebase Admin SDK.
+      // Normal clients cannot create or delete user profiles directly.
+      allow create, delete: if false;
+        
+      // If a user updates their own profile, billing, credit, and audit fields are strictly protected.
+      allow update: if isOwner(uid) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          'credits',
+          'plan',
+          'videosCreatedCount',
+          'totalCreditsUsed',
+          'createdAt'
+        ]);
+
+      // Credit Transactions Ledger: Read-only for owner, written solely by Server Admin SDK
+      match /creditTransactions/{transactionId} {
+        allow read: if isOwner(uid);
+        allow write: if false;
+      }
+
+      // Server Video Generation Records: Read-only for owner, written solely by Server Admin SDK
+      match /generations/{generationId} {
+        allow read: if isOwner(uid);
+        allow write: if false;
+      }
+
+      // User Resources
+      match /folders/{folderId} {
+        allow read, write: if isOwner(uid);
+      }
+      match /files/{fileId} {
+        allow read, write: if isOwner(uid);
+      }
+      match /notes/{noteId} {
+        allow read, write: if isOwner(uid);
+      }
+      match /teamMembers/{memberId} {
+        allow read, write: if isOwner(uid);
+      }
+      match /videos/{videoId} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+  }
+}

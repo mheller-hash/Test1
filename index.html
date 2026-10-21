@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShortsCraft AI — Virale KI-Kurzvideos aus Templates</title>
+    <meta name="description" content="Erstelle virale KI-Kurzvideos für TikTok, Instagram Reels & YouTube Shorts mit anpassbaren Templates ohne Prompting-Hürden." />
+    <meta property="og:title" content="ShortsCraft AI — Virale KI-Kurzvideos aus Templates" />
+    <meta property="og:description" content="Erstelle virale KI-Kurzvideos für TikTok, Instagram Reels & YouTube Shorts mit anpassbaren Templates ohne Prompting-Hürden." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+      // Gracefully prevent unhandled WebSocket/HMR disconnect errors from bubbling in preview iframe
+      window.addEventListener('error', function(e) {
+        if (e && (e.filename?.includes('@vite/client') || e.message?.includes('WebSocket') || e.message?.includes('vite'))) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      }, true);
+      window.addEventListener('unhandledrejection', function(e) {
+        var reason = e && e.reason ? String(e.reason.message || e.reason) : '';
+        if (reason.includes('WebSocket') || reason.includes('@vite/client')) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      }, true);
+    </script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 antialiased selection:bg-rose-500/20 selection:text-rose-700">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
