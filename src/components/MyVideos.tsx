@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Play, Download, Trash2, Clock, Film, Sparkles, Search } from 'lucide-react';
+import { Play, Download, Trash2, Clock, Film, Sparkles, Search, Loader2 } from 'lucide-react';
 import { GeneratedVideo } from '../types';
+import { downloadVideoFile } from '../lib/videoExporter';
 
 interface MyVideosProps {
   videos: GeneratedVideo[];
@@ -17,6 +18,7 @@ export const MyVideos: React.FC<MyVideosProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'generating'>('all');
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   const filteredVideos = videos.filter((vid) => {
     const matchesStatus = statusFilter === 'all' || vid.status === statusFilter;
@@ -26,27 +28,17 @@ export const MyVideos: React.FC<MyVideosProps> = ({
     return matchesStatus && matchesSearch;
   });
 
-  const handleDownload = (vid: GeneratedVideo, e: React.MouseEvent) => {
+  const handleDownload = async (vid: GeneratedVideo, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (vid.videoUrl) {
-      const a = document.createElement('a');
-      a.href = vid.videoUrl;
-      a.download = `${vid.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.mp4`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      return;
+    if (downloadingId) return;
+    setDownloadingId(vid.id);
+    try {
+      await downloadVideoFile(vid);
+    } catch (err) {
+      console.error('Download failed:', err);
+    } finally {
+      setDownloadingId(null);
     }
-    const content = `ShortsCraft AI Video Export (Veo 3.1 Lite)\nTitle: ${vid.title}\nTemplate: ${vid.templateName}\nFormat: ${vid.aspectRatio || '9:16'}\nDuration: ${vid.durationSec}s\nResolution: 720p HD\nCreated: ${vid.createdAt}\n\nScenes:\n${vid.scenes?.map((s) => `Szene ${s.sceneNumber}: [${s.speaker}] ${s.spokenText}`).join('\n') || 'N/A'}`;
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${vid.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${(vid.aspectRatio || '9:16').replace(':', 'x')}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   };
 
   return (
@@ -201,10 +193,15 @@ export const MyVideos: React.FC<MyVideosProps> = ({
                 <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
                   <button
                     onClick={(e) => handleDownload(vid, e)}
-                    className="p-1.5 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
-                    title="Herunterladen"
+                    disabled={downloadingId === vid.id}
+                    className="p-1.5 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer disabled:opacity-50"
+                    title="Video herunterladen"
                   >
-                    <Download className="w-4 h-4" />
+                    {downloadingId === vid.id ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-rose-600" />
+                    ) : (
+                      <Download className="w-4 h-4" />
+                    )}
                   </button>
 
                   <button

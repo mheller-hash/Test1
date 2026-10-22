@@ -125,18 +125,18 @@ export async function refundCredits(
   cost: number,
   model: string,
   reason: string
-) {
+): Promise<{ refunded: boolean; skippedDuplicate?: boolean }> {
   const userRef = adminDb.collection('users').doc(uid);
   const genRef = userRef.collection('generations').doc(generationId);
   const refundTxRef = userRef.collection('creditTransactions').doc(`tx-${generationId}-refund`);
 
   try {
-    await adminDb.runTransaction(async (t) => {
+    return await adminDb.runTransaction(async (t) => {
       // Idempotency: If refund transaction already exists, do not refund again
       const existingRefund = await t.get(refundTxRef);
       if (existingRefund.exists) {
         console.log(`[Refund] Generation ${generationId} was already refunded, skipping duplicate.`);
-        return;
+        return { refunded: false, skippedDuplicate: true };
       }
 
       const userDoc = await t.get(userRef);
@@ -167,10 +167,12 @@ export async function refundCredits(
         refundReason: reason,
         updatedAt: FieldValue.serverTimestamp(),
       });
+
+      return { refunded: true };
     });
-    console.log(`[Refund] Successfully refunded ${cost} credits to user ${uid} for generation ${generationId}`);
   } catch (err) {
     console.error(`[Refund] Failed to refund credits for generation ${generationId}:`, err);
+    return { refunded: false };
   }
 }
 
@@ -545,7 +547,7 @@ app.post('/api/generate-video', requireAuth, async (req: AuthenticatedRequest, r
   }
 });
 
-// Protected: Veo Video Status Polling with Ownership Verification
+// Protected: Veo Video Status Polling with Ownership Verification & Automatic Refund on Failure
 app.post('/api/video-status', requireAuth, async (req: AuthenticatedRequest, res) => {
   try {
     const { operationName } = req.body;
@@ -556,32 +558,63 @@ app.post('/api/video-status', requireAuth, async (req: AuthenticatedRequest, res
       return res.status(400).json({ error: 'Gemini client is not initialized' });
     }
 
+    const uid = req.user!.uid;
+
     // Ownership Verification: Ensure this operation belongs to the authenticated user
     const opDocRef = adminDb.collection('operations').doc(encodeURIComponent(operationName));
     const opDoc = await opDocRef.get();
 
+    let generationId: string | null = null;
+
     if (opDoc.exists) {
       const opData = opDoc.data();
-      if (opData?.userId !== req.user!.uid) {
+      if (opData?.userId !== uid) {
         return res.status(403).json({ error: 'Forbidden: You do not have permission to check this operation.' });
       }
+      generationId = opData?.generationId || null;
     } else {
       // Fallback check in user's generation collection
-      const userGenRef = adminDb.collection('users').doc(req.user!.uid).collection('generations').doc(operationName);
+      const userGenRef = adminDb.collection('users').doc(uid).collection('generations').doc(operationName);
       const userGen = await userGenRef.get();
       if (!userGen.exists) {
         return res.status(403).json({ error: 'Forbidden: You do not have permission to check this operation.' });
       }
+      generationId = userGen.data()?.id || operationName;
     }
 
     const op = new GenerateVideosOperation();
     op.name = operationName;
     const updated = await aiClient.operations.getVideosOperation({ operation: op });
 
+    // Automatic Server-Authoritative Refund on Failure
+    const hasError = Boolean(updated.error || (updated as any).response?.error);
+    let refundInfo: { refunded: boolean; skippedDuplicate?: boolean } = { refunded: false };
+
+    if (hasError && generationId) {
+      // Authoritative cost and model read directly from server records
+      const genRef = adminDb.collection('users').doc(uid).collection('generations').doc(generationId);
+      const genSnap = await genRef.get();
+      const genData = genSnap.exists ? genSnap.data() : null;
+      const cost = typeof genData?.cost === 'number' ? genData.cost : computeVideoCost(genData?.durationSec);
+      const model = genData?.modelUsed || 'veo-3.1-fast-generate-preview';
+      const reason = updated.error?.message || (updated as any).response?.error?.message || 'Veo video rendering failed';
+
+      refundInfo = await refundCredits(uid, generationId, cost, model, reason);
+      console.log(`[Status Polling] Video generation failed for user ${uid}, genId ${generationId}. Refund:`, refundInfo);
+    } else if (updated.done && !hasError && generationId) {
+      // Mark successful completion in generation record
+      const genRef = adminDb.collection('users').doc(uid).collection('generations').doc(generationId);
+      await genRef.update({
+        status: 'completed',
+        updatedAt: FieldValue.serverTimestamp(),
+      }).catch((e) => console.warn('[Status Polling] Could not update generation status to completed:', e.message));
+    }
+
     res.json({
       done: Boolean(updated.done),
       error: updated.error || null,
       metadata: updated.metadata || null,
+      refunded: Boolean(refundInfo.refunded || refundInfo.skippedDuplicate),
     });
   } catch (error: any) {
     console.error('Error checking Veo video status:', error);
@@ -676,8 +709,14 @@ async function startServer() {
     app.use(vite.middlewares);
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server listening on http://0.0.0.0:${PORT}`);
+    console.log(`  ➜  Local:   http://localhost:${PORT}/`);
+    console.log(`  ➜  Network: http://0.0.0.0:${PORT}/`);
+  });
+
+  server.on('error', (err: any) => {
+    console.error('Server listen error:', err);
   });
 }
 

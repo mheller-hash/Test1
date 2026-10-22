@@ -12,8 +12,21 @@ import {
   Subtitles,
   Layers,
   X,
+  Loader2,
+  FileText,
+  Video as VideoIcon,
+  ChevronDown,
+  CheckCircle2,
+  AlertCircle,
+  FileCode,
 } from 'lucide-react';
 import { GeneratedVideo } from '../types';
+import {
+  downloadVideoFile,
+  generateSrtContent,
+  generateScriptContent,
+  triggerBlobDownload,
+} from '../lib/videoExporter';
 
 interface VerticalVideoPlayerProps {
   video: GeneratedVideo;
@@ -35,6 +48,11 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
   const [playbackSpeed, setPlaybackSpeed] = useState<1 | 1.25 | 1.5>(1);
   const [isCopied, setIsCopied] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [downloadStatusText, setDownloadStatusText] = useState('');
+  const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
+  const [showExportMenu, setShowExportMenu] = useState(false);
 
   const durationSec = video.durationSec || 30;
   const scenes = video.scenes || [];
@@ -134,31 +152,66 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
     (s) => sceneRelativeSec >= s.startSec && sceneRelativeSec <= s.endSec
   )?.word;
 
-  const handleDownload = () => {
-    setIsDownloading(true);
-    setTimeout(() => {
-      if (video.videoUrl) {
-        // Direct download of rendered Veo 3.1 MP4 video
-        const a = document.createElement('a');
-        a.href = video.videoUrl;
-        a.download = `${video.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.mp4`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      } else {
-        const content = `ShortsCraft AI Video Export (Veo 3.1 Lite)\nTitle: ${video.title}\nTemplate: ${video.templateName}\nFormat: ${video.aspectRatio || '9:16'}\nDuration: ${video.durationSec}s\nResolution: 720p HD\nCreated: ${video.createdAt}\n\nScenes:\n${video.scenes?.map((s) => `Szene ${s.sceneNumber}: [${s.speaker}] ${s.spokenText}`).join('\n') || 'N/A'}`;
-        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${video.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_video_script.txt`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+  const handleDownloadVideo = async (format: 'video' | 'srt' | 'script' = 'video') => {
+    setShowExportMenu(false);
+    setDownloadError(null);
+
+    const safeTitle = (video.title || 'shortscraft_video')
+      .replace(/[^a-zA-Z0-9_-]/g, '_')
+      .replace(/_+/g, '_')
+      .toLowerCase();
+
+    if (format === 'srt') {
+      try {
+        const srt = generateSrtContent(video);
+        const blob = new Blob([srt], { type: 'text/plain;charset=utf-8' });
+        triggerBlobDownload(blob, `${safeTitle}_untertitel.srt`);
+        setDownloadSuccess('SRT-Untertitel erfolgreich gespeichert!');
+        setTimeout(() => setDownloadSuccess(null), 3500);
+      } catch (err: any) {
+        setDownloadError('Konnte Untertitel-Datei nicht erstellen.');
       }
+      return;
+    }
+
+    if (format === 'script') {
+      try {
+        const script = generateScriptContent(video);
+        const blob = new Blob([script], { type: 'text/plain;charset=utf-8' });
+        triggerBlobDownload(blob, `${safeTitle}_drehbuch.txt`);
+        setDownloadSuccess('Drehbuch erfolgreich gespeichert!');
+        setTimeout(() => setDownloadSuccess(null), 3500);
+      } catch (err: any) {
+        setDownloadError('Konnte Drehbuch-Datei nicht erstellen.');
+      }
+      return;
+    }
+
+    // Video Download (MP4 / WebM)
+    setIsDownloading(true);
+    setDownloadProgress(5);
+    setDownloadStatusText('Bereite Video-Download vor...');
+
+    try {
+      const result = await downloadVideoFile(video, {
+        onProgress: (percent, text) => {
+          setDownloadProgress(percent);
+          setDownloadStatusText(text);
+        },
+      });
+      setDownloadSuccess(`Video erfolgreich gespeichert (${result.filename})!`);
+      setTimeout(() => setDownloadSuccess(null), 4000);
+    } catch (err: any) {
+      console.error('Video download error:', err);
+      setDownloadError(
+        err.message || 'Download fehlgeschlagen. Bitte prüfe deine Browser-Berechtigungen.'
+      );
+      setTimeout(() => setDownloadError(null), 5000);
+    } finally {
       setIsDownloading(false);
-    }, 400);
+      setDownloadProgress(0);
+      setDownloadStatusText('');
+    }
   };
 
   const handleShare = () => {
@@ -351,6 +404,23 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
             </button>
 
             <button
+              onClick={() => handleDownloadVideo('video')}
+              disabled={isDownloading}
+              className={`p-2 transition-colors rounded-lg cursor-pointer ${
+                isDownloading
+                  ? 'text-rose-600 bg-rose-50'
+                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200'
+              }`}
+              title="Video herunterladen (MP4)"
+            >
+              {isDownloading ? (
+                <Loader2 className="w-4 h-4 animate-spin text-rose-600" />
+              ) : (
+                <Download className="w-4 h-4" />
+              )}
+            </button>
+
+            <button
               onClick={() => {
                 setPlaybackSpeed((prev) => (prev === 1 ? 1.25 : prev === 1.25 ? 1.5 : 1));
               }}
@@ -439,19 +509,114 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
             </div>
           </div>
 
-          {/* Action Buttons: Download, Regenerate, Create Similar */}
+          {/* Action Buttons: Download, Progress, Format Options, Regenerate */}
           <div className="space-y-3 pt-6 border-t border-slate-200">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Download Progress Bar */}
+            {isDownloading && (
+              <div className="p-3 bg-rose-50/90 border border-rose-200 rounded-2xl space-y-2 animate-in fade-in duration-200">
+                <div className="flex items-center justify-between text-xs font-semibold text-rose-950">
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-rose-600" />
+                    <span>{downloadStatusText || 'Wird vorbereitet...'}</span>
+                  </span>
+                  <span className="font-mono text-rose-700 font-bold">{downloadProgress}%</span>
+                </div>
+                <div className="w-full bg-rose-200/60 h-2 rounded-full overflow-hidden">
+                  <div
+                    className="bg-rose-600 h-full transition-all duration-200 rounded-full shadow-xs"
+                    style={{ width: `${Math.max(5, downloadProgress)}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Success Toast */}
+            {downloadSuccess && (
+              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-semibold text-emerald-900 animate-in fade-in duration-200 shadow-xs">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>{downloadSuccess}</span>
+              </div>
+            )}
+
+            {/* Error Toast */}
+            {downloadError && (
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-2xl flex items-center gap-2.5 text-xs font-semibold text-rose-900 animate-in fade-in duration-200 shadow-xs">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                <span>{downloadError}</span>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 relative">
               
-              {/* Download Button */}
-              <button
-                onClick={handleDownload}
-                disabled={isDownloading}
-                className="w-full py-3 px-4 bg-rose-600 hover:bg-rose-500 text-white font-semibold rounded-xl text-xs transition-all shadow-md shadow-rose-500/25 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
-              >
-                <Download className="w-4 h-4" />
-                <span>{isDownloading ? 'Wird vorbereitet...' : 'Video herunterladen (MP4)'}</span>
-              </button>
+              {/* Primary Download Button with Dropdown Trigger */}
+              <div className="relative">
+                <div className="flex w-full rounded-xl shadow-md shadow-rose-500/20 overflow-hidden">
+                  <button
+                    onClick={() => handleDownloadVideo('video')}
+                    disabled={isDownloading}
+                    className="flex-1 py-3 px-4 bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                  >
+                    {isDownloading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Download läuft...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Download className="w-4 h-4" />
+                        <span>Video herunterladen (MP4)</span>
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setShowExportMenu((prev) => !prev)}
+                    disabled={isDownloading}
+                    className="px-2.5 bg-rose-700 hover:bg-rose-600 text-white border-l border-rose-500 transition-colors cursor-pointer flex items-center justify-center"
+                    title="Weitere Export-Optionen (.SRT, Drehbuch)"
+                  >
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showExportMenu ? 'rotate-180' : ''}`} />
+                  </button>
+                </div>
+
+                {/* Export Options Dropdown */}
+                {showExportMenu && (
+                  <div className="absolute left-0 right-0 bottom-full mb-2 bg-white border border-slate-200 rounded-2xl shadow-xl z-30 p-1.5 space-y-1 animate-in fade-in slide-in-from-bottom-2">
+                    <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      Export-Formate
+                    </div>
+                    <button
+                      onClick={() => handleDownloadVideo('video')}
+                      className="w-full p-2.5 rounded-xl hover:bg-slate-50 text-left flex items-start gap-2.5 transition-colors cursor-pointer"
+                    >
+                      <VideoIcon className="w-4 h-4 text-rose-600 mt-0.5 shrink-0" />
+                      <div>
+                        <div className="text-xs font-bold text-slate-900">Video (MP4 / WebM HD)</div>
+                        <div className="text-[11px] text-slate-500">Für TikTok, Reels & YouTube Shorts</div>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => handleDownloadVideo('srt')}
+                      className="w-full p-2.5 rounded-xl hover:bg-slate-50 text-left flex items-start gap-2.5 transition-colors cursor-pointer"
+                    >
+                      <FileCode className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+                      <div>
+                        <div className="text-xs font-bold text-slate-900">Untertitel-Datei (.SRT)</div>
+                        <div className="text-[11px] text-slate-500">Mit exakten Timecodes für Untertitel-Upload</div>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => handleDownloadVideo('script')}
+                      className="w-full p-2.5 rounded-xl hover:bg-slate-50 text-left flex items-start gap-2.5 transition-colors cursor-pointer"
+                    >
+                      <FileText className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
+                      <div>
+                        <div className="text-xs font-bold text-slate-900">Drehbuch & Prompts (.TXT)</div>
+                        <div className="text-[11px] text-slate-500">Vollständiges Skript mit Sprechertexten</div>
+                      </div>
+                    </button>
+                  </div>
+                )}
+              </div>
 
               {/* Share / Copy Link Button */}
               <button
@@ -461,6 +626,12 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
                 {isCopied ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4 text-slate-600" />}
                 <span>{isCopied ? 'Link kopiert!' : 'Teilen & Link kopieren'}</span>
               </button>
+            </div>
+
+            {/* Quick compatibility hint */}
+            <div className="text-[11px] text-slate-500 flex items-center justify-between px-1">
+              <span>Format: <strong className="text-slate-800">{video.aspectRatio || '9:16'} HD</strong></span>
+              <span>Direkt kompatibel mit TikTok, Reels & Shorts</span>
             </div>
 
             <div className="flex flex-wrap items-center gap-2 pt-1">
