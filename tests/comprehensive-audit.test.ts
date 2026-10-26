@@ -237,7 +237,7 @@ function validateGenerateVideoInputs(body: any): { valid: boolean; error?: strin
 // Main Test Runner
 async function runComprehensiveAudit() {
   console.log('================================================================');
-  console.log('       SHORTSCRAFT AI - COMPREHENSIVE SECURITY & AUDIT SUITE    ');
+  console.log('       VEYRO.AI - COMPREHENSIVE SECURITY & AUDIT SUITE    ');
   console.log('================================================================\n');
 
   // 1. INPUT VALIDATION TESTS

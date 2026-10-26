@@ -919,6 +919,161 @@ export async function refundCredits(
   }
 }
 
+/**
+ * RECONCILIATION MECHANISM:
+ * Automatically re-evaluates generations stuck in 'reconciliation_required', 'processing', or 'starting'.
+ * Guaranteed exactly-once refund or completion via Firestore transactions.
+ */
+export async function reconcileGenerations() {
+  if (process.env.NODE_ENV === 'test') return;
+  console.log('[Reconciliation] Starting background worker loop...');
+  
+  try {
+    // 1. Fetch all users to check their generations
+    const usersSnap = await adminDb.collection('users').get();
+    let reconciledCount = 0;
+
+    for (const userDoc of usersSnap.docs) {
+      const uid = userDoc.id;
+      const gensRef = adminDb.collection('users').doc(uid).collection('generations');
+      
+      // Look for ambiguous or long-running states
+      const pendingGens = await gensRef
+        .where('status', 'in', ['reconciliation_required', 'processing', 'starting'])
+        .get();
+
+      if (pendingGens.empty) continue;
+
+      for (const genDoc of pendingGens.docs) {
+        const gData = genDoc.data();
+        const generationId = genDoc.id;
+        const now = Date.now();
+        const createdAt = gData.createdAt?.toDate ? gData.createdAt.toDate().getTime() : (typeof gData.createdAt === 'number' ? gData.createdAt : now);
+        const ageMs = now - createdAt;
+
+        // A. Handle stuck 'starting' states (Older than 2 minutes)
+        // This usually means the server crashed/restarted before obtaining an operationName from Veo.
+        if (gData.status === 'starting' && ageMs > 120000) {
+          console.warn(`[Reconciliation] Gen ${generationId} for user ${uid} stuck in 'starting' for ${Math.round(ageMs/1000)}s. Transitioning to 'reconciliation_required'.`);
+          await genDoc.ref.update({ 
+            status: 'reconciliation_required', 
+            error: 'Server-Unterbrechung während der Initialisierung (Timeout)',
+            updatedAt: FieldValue.serverTimestamp() 
+          });
+          continue;
+        }
+
+        // B. Handle 'processing' or 'reconciliation_required' with an operationName
+        if (gData.operationName && (gData.status === 'processing' || gData.status === 'reconciliation_required')) {
+          try {
+            const opName = gData.operationName;
+            const isInteraction = Boolean(gData.isInteraction || opName.startsWith('v1_') || !opName.includes('/'));
+            
+            let isDone = false;
+            let isFailed = false;
+            let errorMsg = '';
+
+            if (isInteraction) {
+              if (!aiClient) continue;
+              const interaction = await aiClient.interactions.get(opName);
+              isDone = interaction.status === 'completed';
+              isFailed = interaction.status === 'failed' || interaction.status === 'cancelled';
+              const rawError = (interaction as any).error || (interaction.errors && interaction.errors[0]);
+              errorMsg = rawError?.message || 'Interaction failed';
+            } else {
+              if (!aiClient) continue;
+              const op = new GenerateVideosOperation();
+              op.name = opName;
+              const updated = await aiClient.operations.getVideosOperation({ operation: op });
+              isDone = Boolean(updated.done);
+              isFailed = Boolean(updated.error || (updated as any).response?.error);
+              errorMsg = updated.error?.message || (updated as any).response?.error?.message || 'Veo operation failed';
+            }
+
+            if (isDone && !isFailed) {
+              console.log(`[Reconciliation] Successfully recovered COMPLETED generation ${generationId} for user ${uid}.`);
+              await completeGenerationAtomically(uid, generationId);
+              // Async archive
+              archiveVideoToStorage(uid, generationId, opName).catch(() => {});
+              reconciledCount++;
+            } else if (isFailed) {
+              console.log(`[Reconciliation] Recovered FAILED generation ${generationId} for user ${uid}. Refunding ${gData.cost || 10} credits.`);
+              await refundCredits(
+                uid, 
+                generationId, 
+                gData.cost || 10, 
+                gData.modelUsed || 'veo-3.1-fast-generate-preview', 
+                `Automatisierte Hintergrund-Bereinigung: ${errorMsg}`
+              );
+              reconciledCount++;
+            } else if (ageMs > 3600000) {
+              // Terminal Guard: If a job is still 'processing' after 1 hour, it is almost certainly lost or stuck in Google's cloud.
+              // Refund it to protect the user experience.
+              console.warn(`[Reconciliation] Gen ${generationId} still 'processing' after 1 hour. Forcing refund.`);
+              await refundCredits(
+                uid, 
+                generationId, 
+                gData.cost || 10, 
+                gData.modelUsed || 'veo-3.1-fast-generate-preview', 
+                'Hintergrund-Timeout: Job dauerte länger als 60 Minuten.'
+              );
+              reconciledCount++;
+            }
+          } catch (apiErr: any) {
+            // If the operation is not found (404), it might have been purged or never existed.
+            if (apiErr.status === 404 || apiErr.code === 404 || apiErr.message?.includes('not found')) {
+               if (ageMs > 300000) { // Give it 5 minutes grace period
+                 console.warn(`[Reconciliation] Operation ${gData.operationName} not found for gen ${generationId}. Refunding.`);
+                 await refundCredits(
+                   uid, 
+                   generationId, 
+                   gData.cost || 10, 
+                   gData.modelUsed || 'veo-3.1-fast-generate-preview', 
+                   'Google-Operation wurde nicht gefunden oder existiert nicht mehr.'
+                 );
+                 reconciledCount++;
+               }
+            } else {
+              console.error(`[Reconciliation] Error checking operation for ${generationId}:`, apiErr.message);
+            }
+          }
+        } 
+        // C. Handle 'reconciliation_required' WITHOUT an operationName
+        else if (!gData.operationName && gData.status === 'reconciliation_required' && ageMs > 300000) {
+          console.warn(`[Reconciliation] Gen ${generationId} stuck in 'reconciliation_required' without operationName for ${Math.round(ageMs/1000)}s. Refunding.`);
+          await refundCredits(
+            uid, 
+            generationId, 
+            gData.cost || 10, 
+            gData.modelUsed || 'veo-3.1-fast-generate-preview', 
+            'Server konnte den Operation-Status nicht ermitteln (kein OpName vorhanden).'
+          );
+          reconciledCount++;
+        }
+      }
+    }
+    
+    if (reconciledCount > 0) {
+      console.log(`[Reconciliation] Cycle finished. Successfully reconciled ${reconciledCount} records.`);
+    }
+  } catch (err: any) {
+    console.error('[Reconciliation] Background worker loop failed:', err.message);
+  }
+}
+
+// Background Scheduler: Every 5 minutes
+if (process.env.NODE_ENV !== 'test') {
+  const reconciliationInterval = setInterval(() => {
+    reconcileGenerations().catch(err => console.error('Scheduled reconciliation failed:', err));
+  }, 5 * 60 * 1000);
+  reconciliationInterval.unref();
+  
+  // Initial run after a short delay (30s) to allow system to settle
+  setTimeout(() => {
+    reconcileGenerations().catch(err => console.error('Initial reconciliation failed:', err));
+  }, 30000);
+}
+
 // Initialize Gemini Client if key exists
 let aiClient: GoogleGenAI | null = null;
 if (process.env.GEMINI_API_KEY) {
@@ -950,7 +1105,7 @@ function buildTimedSubtitles(text: string, startOffsetSec: number, totalDuration
 
 // Public Health Check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', service: 'ShortsCraft AI backend' });
+  res.json({ status: 'ok', service: 'Veyro.ai backend' });
 });
 
 // Protected: Initialize / Sync user profile in Firestore
@@ -1137,13 +1292,58 @@ app.get('/api/admin/users', requireAdmin, async (req: AuthenticatedRequest, res)
       
       // Calculate estimated API cost for this user
       // $0.35 per video + $0.001 per prompt call
-      u.estimatedCostUsd = parseFloat((u.successfulGenerations * 0.351).toFixed(3));
+      u.estimatedCostUsd = parseFloat((u.successfulGenerations * 0.35).toFixed(3));
     }
 
     res.json({ success: true, count: usersList.length, users: usersList });
   } catch (error: any) {
     console.error('Error listing admin users:', error);
     res.status(500).json({ error: error.message || 'Failed to list admin users' });
+  }
+});
+
+// Admin: List all generations requiring reconciliation across all users
+app.get('/api/admin/reconciliations', requireAdmin, async (req: AuthenticatedRequest, res) => {
+  try {
+    const reconciliations: any[] = [];
+    
+    // 1. Fetch all users
+    const usersSnap = await adminDb.collection('users').get();
+    
+    for (const userDoc of usersSnap.docs) {
+      const uid = userDoc.id;
+      const uData = userDoc.data();
+      
+      // 2. Fetch generations with reconciliation_required status
+      const gensSnap = await adminDb.collection('users').doc(uid).collection('generations')
+        .where('status', '==', 'reconciliation_required')
+        .get();
+        
+      for (const genDoc of gensSnap.docs) {
+        const gData = genDoc.data();
+        reconciliations.push({
+          ...gData,
+          userId: uid,
+          userEmail: uData.email || '',
+          userDisplayName: uData.displayName || '',
+          id: genDoc.id,
+          createdAt: gData.createdAt?.toDate ? gData.createdAt.toDate().toISOString() : gData.createdAt,
+          updatedAt: gData.updatedAt?.toDate ? gData.updatedAt.toDate().toISOString() : gData.updatedAt,
+        });
+      }
+    }
+    
+    // Sort by most recent
+    reconciliations.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA;
+    });
+    
+    res.json({ success: true, count: reconciliations.length, reconciliations });
+  } catch (error: any) {
+    console.error('Error fetching reconciliations:', error);
+    res.status(500).json({ error: error.message || 'Failed to fetch reconciliations' });
   }
 });
 
@@ -2705,7 +2905,11 @@ app.post('/api/video-status', requireAuth, async (req: AuthenticatedRequest, res
 
       if (generationId) {
         if (hasError) {
-          refundInfo = await refundCredits(uid, generationId, 10, 'gemini-omni-1.1-flash', rawError?.message || 'Video generation failed');
+          const genSnap = await adminDb.collection('users').doc(uid).collection('generations').doc(generationId).get().catch(() => null);
+          const genData = genSnap && genSnap.exists ? genSnap.data() : null;
+          const cost = typeof genData?.cost === 'number' ? genData.cost : 10;
+          
+          refundInfo = await refundCredits(uid, generationId, cost, 'gemini-omni-1.1-flash', rawError?.message || 'Video generation failed');
           console.log(`[Status Polling] Omni interaction failed for user ${uid}, genId ${generationId}. Refund:`, refundInfo);
         } else if (isDone && !hasError) {
           await completeGenerationAtomically(uid, generationId);

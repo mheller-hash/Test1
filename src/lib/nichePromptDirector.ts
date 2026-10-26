@@ -103,7 +103,7 @@ NUTZER-STIL- UND REGIEWÜNSCHE (Höchste Priorität für Ästhetik-Details):
 `
     : '';
 
-  return `Du bist der offizielle KI-Prompt-Director für die spezialisierte Video-Nische "${niche.name}" bei ShortsCraft AI.
+  return `Du bist der offizielle KI-Prompt-Director für die spezialisierte Video-Nische "${niche.name}" bei Veyro.ai.
 Deine Rolle: ${guidance.role}.
 
 ZIEL:

@@ -1,7 +1,7 @@
 import { VideoNiche } from '../types/niche';
 
 /**
- * Centrally configured, predetermined video niches for ShortsCraft AI.
+ * Centrally configured, predetermined video niches for Veyro.ai.
  * 
  * CRITICAL ARCHITECTURAL RULE:
  * Users CANNOT create, edit, or delete niches.

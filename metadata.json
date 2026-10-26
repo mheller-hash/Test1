@@ -1,6 +1,8 @@
 {
-  "name": "ShortsCraft AI",
+  "name": "Veyro.ai",
   "description": "Moderne SaaS-Plattform für die automatisierte Erstellung viraler KI-Kurzvideos für TikTok, Instagram Reels und YouTube Shorts über fertige Templates.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

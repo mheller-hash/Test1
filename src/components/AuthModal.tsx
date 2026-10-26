@@ -180,7 +180,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
           </div>
           <div>
             <div className="text-base font-bold text-slate-900 tracking-tight flex items-center gap-1.5">
-              <span>ShortsCraft</span>
+              <span>Veyro</span>
               <span className="text-rose-600">.ai</span>
             </div>
             <div className="text-[11px] text-slate-500 font-medium">

@@ -10,7 +10,7 @@ import {
 import { CreateVideoFormState } from '../src/types/workflow.js';
 
 // =========================================================================
-// TEST SUITE: SHORTSCRAFT AI VEO PROMPT ENGINE COMPREHENSIVE TESTS (1 - 7)
+// TEST SUITE: VEYRO.AI VEO PROMPT ENGINE COMPREHENSIVE TESTS (1 - 7)
 // =========================================================================
 
 test('Test 1: Simple idea — no phantom characters hallucinated', () => {

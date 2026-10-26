@@ -135,6 +135,7 @@ export function AdminDashboard() {
     generations: GenerationRecord[];
   } | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [reconciliations, setReconciliations] = useState<any[]>([]);
 
   // Credit Adjustment Modal
   const [isAdjustModalOpen, setIsAdjustModalOpen] = useState(false);
@@ -171,9 +172,10 @@ export function AdminDashboard() {
     setRefreshing(true);
     setError(null);
     try {
-      const [statsRes, usersRes] = await Promise.all([
+      const [statsRes, usersRes, reconRes] = await Promise.all([
         authFetch('/api/admin/stats'),
         authFetch('/api/admin/users'),
+        authFetch('/api/admin/reconciliations'),
       ]);
 
       if (!statsRes.ok) {
@@ -187,9 +189,11 @@ export function AdminDashboard() {
 
       const statsData = await statsRes.json();
       const usersData = await usersRes.json();
+      const reconData = await reconRes.json();
 
       setStats(statsData.stats);
       setUsers(usersData.users || []);
+      setReconciliations(reconData.reconciliations || []);
     } catch (err: any) {
       console.error('Admin Dashboard Load Error:', err);
       setError(err.message || 'Konnte Admin-Daten nicht abrufen.');
@@ -547,6 +551,79 @@ export function AdminDashboard() {
                   <span className="font-mono">${stats.estimatedCosts.totalCostUsd.toFixed(2)} USD</span>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Stuck Generations / Reconciliation View */}
+        {reconciliations.length > 0 && (
+          <div className="bg-slate-900/80 border border-amber-900/50 rounded-2xl p-6 backdrop-blur-md shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+              <AlertTriangle className="w-24 h-24 text-amber-500" />
+            </div>
+            
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-lg font-bold text-amber-400 flex items-center gap-2">
+                  <AlertTriangle className="w-5 h-5" />
+                  Hängende Generierungen ({reconciliations.length})
+                </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  Diese Jobs befinden sich im Status <code className="text-amber-300">reconciliation_required</code> und werden im Hintergrund automatisch geprüft.
+                </p>
+              </div>
+              <button 
+                onClick={fetchAdminData}
+                className="text-[10px] font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer"
+              >
+                <RefreshCw className={`w-3 h-3 ${refreshing ? 'animate-spin' : ''}`} />
+                Liste aktualisieren
+              </button>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-800 text-slate-400 font-semibold uppercase tracking-wider">
+                    <th className="py-3 px-4">Nutzer</th>
+                    <th className="py-3 px-4">Generation ID</th>
+                    <th className="py-3 px-4">Modell</th>
+                    <th className="py-3 px-4">Operation Name</th>
+                    <th className="py-3 px-4">Erstellt am</th>
+                    <th className="py-3 px-4 text-center">Aktionen</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                  {reconciliations.map((r) => (
+                    <tr key={r.id} className="hover:bg-slate-800/40 transition group">
+                      <td className="py-3 px-4">
+                        <div className="font-semibold text-slate-200">{r.userEmail || 'Unbekannt'}</div>
+                        <div className="text-[10px] text-slate-500 font-mono">{r.userId}</div>
+                      </td>
+                      <td className="py-3 px-4 font-mono text-amber-200/80">{r.id}</td>
+                      <td className="py-3 px-4">
+                        <span className="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] font-mono border border-slate-700 text-slate-400">
+                          {r.modelUsed || 'veo'}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 font-mono text-[10px] text-slate-500 max-w-[150px] truncate">
+                        {r.operationName || 'N/A'}
+                      </td>
+                      <td className="py-3 px-4 text-slate-400">
+                        {new Date(r.createdAt).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <button 
+                          onClick={() => handleFetchUserDetail(r.userId)}
+                          className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold cursor-pointer"
+                        >
+                          Nutzer prüfen
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )}

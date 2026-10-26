@@ -72,7 +72,7 @@ function formatSrtTime(seconds: number): string {
  */
 export function generateScriptContent(video: GeneratedVideo): string {
   return [
-    `ShortsCraft AI — Video Script & Export Metadata`,
+    `Veyro.ai — Video Script & Export Metadata`,
     `================================================`,
     `Titel:         ${video.title}`,
     `Template:      ${video.templateName}`,
@@ -204,7 +204,7 @@ async function renderVideoFromStoryboard(
       durationSec: video.durationSec || 30,
       imagePrompt: video.title,
       imageUrl: video.thumbnailUrl,
-      speaker: 'ShortsCraft',
+      speaker: 'Veyro',
       spokenText: video.title,
       subtitles: [],
       visualAction: 'Szenenansicht',
@@ -269,7 +269,7 @@ async function renderVideoFromStoryboard(
     recorder.onstop = () => {
       try {
         const blob = new Blob(recordedChunks, { type: mimeType });
-        const filename = `${cleanTitle}_shortscraft.${extension}`;
+        const filename = `${cleanTitle}_veyro.${extension}`;
         triggerBlobDownload(blob, filename);
         onProgress?.(100, 'Download abgeschlossen!');
         resolve({ format: extension, filename });
@@ -335,7 +335,7 @@ async function renderVideoFromStoryboard(
 
     ctx.fillStyle = '#fda4af';
     ctx.font = 'bold 16px "Plus Jakarta Sans", sans-serif';
-    ctx.fillText(`${video.templateName || 'ShortsCraft'}`, 44, 55);
+    ctx.fillText(`${video.templateName || 'Veyro'}`, 44, 55);
 
     ctx.fillStyle = '#fde047';
     ctx.font = 'bold 13px "JetBrains Mono", monospace';
@@ -386,7 +386,7 @@ async function renderVideoFromStoryboard(
     ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
     ctx.font = '13px "JetBrains Mono", monospace';
     ctx.textAlign = 'right';
-    ctx.fillText('ShortsCraft.ai', width - 40, height - 30);
+    ctx.fillText('Veyro.ai', width - 40, height - 30);
     ctx.textAlign = 'left';
 
     await new Promise((r) => setTimeout(r, 20));

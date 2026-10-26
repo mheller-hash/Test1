@@ -270,10 +270,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       <footer className="py-8 border-t border-slate-200 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-800">ShortsCraft AI</span>
+            <span className="font-bold text-slate-800">Veyro.ai</span>
             <span>· Das Template-System für virale Kurzvideos</span>
           </div>
-          <div>© {new Date().getFullYear()} ShortsCraft AI. Alle Rechte vorbehalten.</div>
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <span>Support: <a href="mailto:support.veyro.ai@protonmail.com" className="text-rose-600 hover:underline">support.veyro.ai@protonmail.com</a></span>
+            <div>© {new Date().getFullYear()} Veyro.ai. Alle Rechte vorbehalten.</div>
+          </div>
         </div>
       </footer>
 

@@ -52,7 +52,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Film className="w-4 h-4 text-white" />
           </div>
           <span className="text-lg font-bold tracking-tight text-slate-900 whitespace-nowrap shrink-0">
-            ShortsCraft<span className="text-rose-600">.ai</span>
+            Veyro<span className="text-rose-600">.ai</span>
           </span>
         </button>
 

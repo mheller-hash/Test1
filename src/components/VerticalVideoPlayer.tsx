@@ -165,7 +165,7 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
     setShowExportMenu(false);
     setDownloadError(null);
 
-    const safeTitle = (video.title || 'shortscraft_video')
+    const safeTitle = (video.title || 'veyro_video')
       .replace(/[^a-zA-Z0-9_-]/g, '_')
       .replace(/_+/g, '_')
       .toLowerCase();

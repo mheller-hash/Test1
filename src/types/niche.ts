@@ -1,5 +1,5 @@
 /**
- * Definition and specifications for predetermined video niches in ShortsCraft AI.
+ * Definition and specifications for predetermined video niches in Veyro.ai.
  * Users cannot create, edit, or delete niches - they are centrally configured in code.
  */
 
