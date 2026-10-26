@@ -19,22 +19,22 @@ export const NotesSection: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-slate-900">Meine Notizen</h2>
+        <h2 className="text-xl font-bold text-white">Meine Notizen</h2>
         <button onClick={() => setIsModalOpen(true)} className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold rounded-xl flex items-center gap-2 cursor-pointer">
           <Plus className="w-3.5 h-3.5" /> Neue Notiz
         </button>
       </div>
 
       {notes.length === 0 ? (
-        <div className="p-12 text-center bg-white border border-slate-200 rounded-2xl">
-          <p className="text-slate-500 text-sm">Noch keine Notizen.</p>
+        <div className="p-12 text-center bg-zinc-950 border border-zinc-800 rounded-2xl">
+          <p className="text-zinc-500 text-sm">Noch keine Notizen.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {notes.map(n => (
-            <div key={n.id} className="p-4 bg-white border border-slate-200 rounded-xl space-y-2">
-              <h3 className="font-bold text-sm text-slate-900">{n.title}</h3>
-              <p className="text-xs text-slate-600 truncate">{n.content}</p>
+            <div key={n.id} className="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2">
+              <h3 className="font-bold text-sm text-white">{n.title}</h3>
+              <p className="text-xs text-zinc-400 truncate">{n.content}</p>
             </div>
           ))}
         </div>

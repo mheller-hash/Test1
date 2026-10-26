@@ -82,10 +82,10 @@ export const MyVideos: React.FC<MyVideosProps> = ({
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
             My Videos Library
           </h1>
-          <p className="text-sm text-slate-600 mt-1">
+          <p className="text-sm text-zinc-400 mt-1">
             Deine erstellten vertikalen KI-Videos. Jederzeit ansehen, teilen oder herunterladen.
           </p>
         </div>
@@ -93,13 +93,13 @@ export const MyVideos: React.FC<MyVideosProps> = ({
         <div className="flex items-center gap-3">
           {/* Search */}
           <div className="relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Videos durchsuchen..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/30 transition-all w-48 sm:w-60 shadow-xs"
+              className="bg-zinc-900 border border-zinc-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/30 transition-all w-48 sm:w-60 shadow-xs"
             />
           </div>
 
@@ -114,13 +114,13 @@ export const MyVideos: React.FC<MyVideosProps> = ({
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-3">
+      <div className="flex items-center gap-2 border-b border-zinc-800 pb-3">
         <button
           onClick={() => setStatusFilter('all')}
           className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
             statusFilter === 'all'
-              ? 'bg-slate-900 text-white font-semibold shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              ? 'bg-rose-600 text-white font-semibold shadow-xs'
+              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
           }`}
         >
           Alle Videos ({videos.length})
@@ -130,8 +130,8 @@ export const MyVideos: React.FC<MyVideosProps> = ({
           onClick={() => setStatusFilter('completed')}
           className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
             statusFilter === 'completed'
-              ? 'bg-slate-900 text-white font-semibold shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              ? 'bg-rose-600 text-white font-semibold shadow-xs'
+              : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
           }`}
         >
           Fertiggestellt ({videos.filter((v) => v.status === 'completed').length})
@@ -140,12 +140,12 @@ export const MyVideos: React.FC<MyVideosProps> = ({
 
       {/* Videos Grid or Empty State */}
       {filteredVideos.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-3xl border border-slate-200 max-w-lg mx-auto p-8 space-y-4 shadow-sm">
-          <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center mx-auto">
+        <div className="text-center py-20 bg-zinc-950 rounded-3xl border border-zinc-800 max-w-lg mx-auto p-8 space-y-4 shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-zinc-900 text-zinc-500 flex items-center justify-center mx-auto">
             <Film className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900">Noch keine Videos vorhanden</h3>
-          <p className="text-xs text-slate-600 leading-relaxed">
+          <h3 className="text-lg font-bold text-white">Noch keine Videos vorhanden</h3>
+          <p className="text-xs text-zinc-500 leading-relaxed">
             Wähle ein Template wie AI Fruit Drama oder AI Story, passe es an und erstelle in unter einer Minute dein erstes virales Video.
           </p>
           <button
@@ -162,7 +162,7 @@ export const MyVideos: React.FC<MyVideosProps> = ({
             <div
               key={vid.id}
               onClick={() => onPlayVideo(vid)}
-              className="group cursor-pointer rounded-2xl bg-white border border-slate-200 overflow-hidden hover:border-rose-400 hover:shadow-xl transition-all flex flex-col shadow-xs"
+              className="group cursor-pointer rounded-2xl bg-zinc-950 border border-zinc-800 overflow-hidden hover:border-rose-500 hover:shadow-2xl hover:shadow-rose-500/10 transition-all flex flex-col shadow-sm"
             >
               {/* Thumbnail (9:16 or 16:9) */}
               <div className={`relative ${vid.aspectRatio === '16:9' ? 'aspect-video' : 'aspect-[9/16]'} w-full bg-slate-900 overflow-hidden`}>
@@ -188,10 +188,10 @@ export const MyVideos: React.FC<MyVideosProps> = ({
                   <span
                     className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-semibold ${
                       vid.status === 'completed'
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-300'
+                        ? 'bg-emerald-950/50 text-emerald-400 border border-emerald-900/50'
                         : vid.status === 'generating'
-                        ? 'bg-amber-50 text-amber-700 border border-amber-300'
-                        : 'bg-rose-50 text-rose-700 border border-rose-300'
+                        ? 'bg-amber-950/50 text-amber-400 border border-amber-900/50'
+                        : 'bg-rose-950/50 text-rose-400 border border-rose-900/50'
                     }`}
                   >
                     {vid.status === 'completed' ? 'Fertig' : vid.status === 'generating' ? 'Wird erstellt' : 'Fehlgeschlagen'}
@@ -255,20 +255,20 @@ export const MyVideos: React.FC<MyVideosProps> = ({
               <div className="p-4 flex-1 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-1">
-                    <span className="text-[11px] font-semibold text-rose-600 truncate">
+                    <span className="text-[11px] font-semibold text-rose-500 truncate">
                       {vid.templateName}
                     </span>
                     {vid.nicheId && (
-                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-zinc-900 text-zinc-400 border border-zinc-800 shrink-0">
                         <span>{getNicheById(vid.nicheId).icon}</span>
                         <span>{getNicheById(vid.nicheId).name}</span>
                       </span>
                     )}
                   </div>
-                  <h3 className="font-bold text-slate-900 text-sm line-clamp-2 group-hover:text-rose-600 transition-colors">
+                  <h3 className="font-bold text-white text-sm line-clamp-2 group-hover:text-rose-500 transition-colors">
                     {vid.title}
                   </h3>
-                  <div className="flex items-center gap-2 text-[11px] text-slate-500 mt-2">
+                  <div className="flex items-center gap-2 text-[11px] text-zinc-500 mt-2">
                     <span>{vid.createdAt}</span>
                     <span aria-hidden="true">·</span>
                     <span className="font-mono tabular-nums">{vid.creditUsed} Credits</span>
@@ -276,15 +276,15 @@ export const MyVideos: React.FC<MyVideosProps> = ({
                 </div>
 
                 {/* Card Actions */}
-                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div className="mt-4 pt-3 border-t border-zinc-900 flex items-center justify-between">
                   <button
                     onClick={(e) => handleDownload(vid, e)}
                     disabled={downloadingId === vid.id}
-                    className="p-1.5 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer disabled:opacity-50"
+                    className="p-1.5 text-zinc-500 hover:text-white rounded-lg hover:bg-zinc-800 transition-colors cursor-pointer disabled:opacity-50"
                     title="Video herunterladen"
                   >
                     {downloadingId === vid.id ? (
-                      <Loader2 className="w-4 h-4 animate-spin text-rose-600" />
+                      <Loader2 className="w-4 h-4 animate-spin text-rose-500" />
                     ) : (
                       <Download className="w-4 h-4" />
                     )}
@@ -295,7 +295,7 @@ export const MyVideos: React.FC<MyVideosProps> = ({
                       e.stopPropagation();
                       onDeleteVideo(vid.id);
                     }}
-                    className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
+                    className="p-1.5 text-zinc-600 hover:text-rose-500 rounded-lg hover:bg-rose-950/30 transition-colors cursor-pointer"
                     title="Löschen"
                   >
                     <Trash2 className="w-4 h-4" />

@@ -343,8 +343,8 @@ export const VideoGeneratorModal: React.FC<VideoGeneratorModalProps> = ({
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm transition-all animate-in fade-in duration-200">
-      <div className="w-full max-w-lg bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-all animate-in fade-in duration-200">
+      <div className="w-full max-w-lg bg-zinc-950 border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative overflow-hidden">
         
         {/* Subtle glow */}
         <div className="absolute top-0 right-1/4 w-48 h-48 bg-rose-500/10 rounded-full blur-[70px] pointer-events-none" />
@@ -356,20 +356,20 @@ export const VideoGeneratorModal: React.FC<VideoGeneratorModalProps> = ({
             <span>Google Veo 3.1 Studio</span>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+          <h2 className="text-xl sm:text-2xl font-bold text-white">
             {isFailed ? 'Generierung fehlgeschlagen' : 'Dein Video wird erstellt'}
           </h2>
 
-          <p className="text-xs text-slate-500">
-            Format: <span className="text-slate-900 font-semibold">{template.title}</span> ({settings.aspectRatio || '9:16'})
+          <p className="text-xs text-zinc-400">
+            Format: <span className="text-white font-semibold">{template.title}</span> ({settings.aspectRatio || '9:16'})
           </p>
         </div>
 
         {/* Status Message */}
         <div className={`text-center p-2.5 rounded-xl border text-xs font-medium ${
           isFailed
-            ? 'bg-rose-50 border-rose-200 text-rose-700 font-semibold'
-            : 'bg-slate-50 border-slate-200 text-slate-700'
+            ? 'bg-rose-950/30 border-rose-900/50 text-rose-400 font-semibold'
+            : 'bg-zinc-900 border-zinc-800 text-zinc-300'
         }`}>
           {statusMessage}
         </div>
@@ -377,11 +377,11 @@ export const VideoGeneratorModal: React.FC<VideoGeneratorModalProps> = ({
         {/* Progress Bar (hidden when failed) */}
         {!isFailed && (
           <div className="space-y-1.5">
-            <div className="flex justify-between text-xs text-slate-600">
+            <div className="flex justify-between text-xs text-zinc-400">
               <span className="font-medium">Fortschritt</span>
-              <span className="font-mono tabular-nums text-slate-900 font-bold">{progressPercent}%</span>
+              <span className="font-mono tabular-nums text-white font-bold">{progressPercent}%</span>
             </div>
-            <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200">
+            <div className="w-full h-2.5 bg-zinc-900 rounded-full overflow-hidden p-0.5 border border-zinc-800">
               <div
                 className="h-full bg-gradient-to-r from-rose-600 via-rose-500 to-amber-500 rounded-full transition-all duration-500 ease-out shadow-xs"
                 style={{ width: `${progressPercent}%` }}
@@ -403,19 +403,19 @@ export const VideoGeneratorModal: React.FC<VideoGeneratorModalProps> = ({
                   key={step.id}
                   className={`flex items-start gap-3 p-2.5 rounded-xl border transition-all ${
                     isCurrent
-                      ? 'bg-rose-50/80 border-rose-300 text-slate-900 shadow-sm'
+                      ? 'bg-rose-950/20 border-rose-800 text-white shadow-sm'
                       : isCompleted
-                      ? 'bg-emerald-50/40 border-emerald-200 text-slate-800'
-                      : 'bg-slate-50/50 border-slate-100 text-slate-400 opacity-60'
+                      ? 'bg-emerald-950/20 border-emerald-900/50 text-emerald-100'
+                      : 'bg-zinc-900/50 border-zinc-800 text-zinc-500 opacity-60'
                   }`}
                 >
                   <div
                     className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
                       isCompleted
-                        ? 'bg-emerald-100 text-emerald-700'
+                        ? 'bg-emerald-900/50 text-emerald-400'
                         : isCurrent
                         ? 'bg-rose-600 text-white shadow-sm'
-                        : 'bg-slate-200 text-slate-500'
+                        : 'bg-zinc-800 text-zinc-500'
                     }`}
                   >
                     {isCompleted ? (
@@ -431,7 +431,7 @@ export const VideoGeneratorModal: React.FC<VideoGeneratorModalProps> = ({
                     <div className="flex items-center justify-between">
                       <span
                         className={`text-xs font-semibold ${
-                          isCurrent ? 'text-slate-900 font-bold' : isCompleted ? 'text-slate-800' : 'text-slate-400'
+                          isCurrent ? 'text-white font-bold' : isCompleted ? 'text-emerald-100' : 'text-zinc-500'
                         }`}
                       >
                         {step.label}
@@ -443,7 +443,7 @@ export const VideoGeneratorModal: React.FC<VideoGeneratorModalProps> = ({
                         <span className="text-[10px] font-mono text-rose-600 font-bold animate-pulse">Aktiv</span>
                       )}
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-0.5 leading-snug truncate">
+                    <p className="text-[11px] text-zinc-500 mt-0.5 leading-snug truncate">
                       {step.detail}
                     </p>
                   </div>
@@ -472,14 +472,14 @@ export const VideoGeneratorModal: React.FC<VideoGeneratorModalProps> = ({
           {isFailed ? (
             <button
               onClick={onCancel}
-              className="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors cursor-pointer shadow-sm"
+              className="px-5 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold transition-colors cursor-pointer shadow-sm"
             >
               Schließen
             </button>
           ) : (
             <button
               onClick={onCancel}
-              className="text-xs text-slate-500 hover:text-slate-800 transition-colors cursor-pointer font-medium"
+              className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer font-medium"
             >
               Im Hintergrund weiterlaufen lassen
             </button>

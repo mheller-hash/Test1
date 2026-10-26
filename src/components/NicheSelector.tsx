@@ -26,18 +26,18 @@ export const NicheSelector: React.FC<NicheSelectorProps> = ({
       {!compact && (
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200 mb-2">
-              <Sparkles className="w-3.5 h-3.5 text-rose-600" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-950/30 text-rose-400 border border-rose-900/50 mb-2">
+              <Sparkles className="w-3.5 h-3.5 text-rose-500" />
               <span>Vorgegebene Formate</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
               {title}
             </h2>
-            <p className="text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
+            <p className="text-sm text-zinc-400 mt-1 max-w-2xl leading-relaxed">
               {subtitle}
             </p>
           </div>
-          <div className="text-xs text-slate-500 font-medium bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 self-start sm:self-auto">
+          <div className="text-xs text-zinc-500 font-medium bg-zinc-900 px-3 py-1.5 rounded-xl border border-zinc-800 self-start sm:self-auto">
             {niches.length} kuratierte Nischen verfügbar
           </div>
         </div>
@@ -52,14 +52,14 @@ export const NicheSelector: React.FC<NicheSelectorProps> = ({
             <div
               key={niche.id}
               onClick={() => onSelectNiche(niche)}
-              className={`group relative rounded-2xl bg-white border transition-all duration-300 overflow-hidden cursor-pointer flex flex-col justify-between ${
+              className={`group relative rounded-2xl bg-zinc-950 border transition-all duration-300 overflow-hidden cursor-pointer flex flex-col justify-between ${
                 isSelected
                   ? 'border-rose-500 ring-2 ring-rose-500/20 shadow-md shadow-rose-500/10'
-                  : 'border-slate-200 hover:border-slate-300 hover:shadow-lg shadow-xs'
+                  : 'border-zinc-800 hover:border-zinc-700 hover:shadow-lg shadow-xs'
               }`}
             >
               {/* Card Image Banner */}
-              <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-900">
+              <div className="relative aspect-[16/9] w-full overflow-hidden bg-zinc-900">
                 <img
                   src={niche.previewImage}
                   alt={niche.name}
@@ -69,7 +69,7 @@ export const NicheSelector: React.FC<NicheSelectorProps> = ({
                 />
                 
                 {/* Gradient Overlays for Readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-zinc-950/20 to-transparent" />
 
                 {/* Badge Overlay */}
                 {niche.badge && (
@@ -98,29 +98,28 @@ export const NicheSelector: React.FC<NicheSelectorProps> = ({
                       {niche.name}
                     </h3>
                   </div>
-                  <p className="text-xs text-slate-200 mt-0.5 line-clamp-1 font-medium">
+                  <p className="text-xs text-zinc-200 mt-0.5 line-clamp-1 font-medium">
                     {niche.tagline}
                   </p>
                 </div>
               </div>
 
-              {/* Card Body */}
               <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
                   {niche.description}
                 </p>
 
                 {/* Characteristics Pills */}
-                <div className="space-y-2 pt-2 border-t border-slate-100">
+                <div className="space-y-2 pt-2 border-t border-zinc-900">
                   <div className="flex items-start gap-2 text-xs">
-                    <span className="text-slate-400 font-semibold shrink-0">Stil:</span>
-                    <span className="text-slate-700 line-clamp-1 font-medium">
+                    <span className="text-zinc-500 font-semibold shrink-0">Stil:</span>
+                    <span className="text-zinc-300 line-clamp-1 font-medium">
                       {niche.visualStyle.split(',')[0]}
                     </span>
                   </div>
                   <div className="flex items-start gap-2 text-xs">
-                    <span className="text-slate-400 font-semibold shrink-0">Figuren:</span>
-                    <span className="text-slate-700 line-clamp-1 font-medium">
+                    <span className="text-zinc-500 font-semibold shrink-0">Figuren:</span>
+                    <span className="text-zinc-300 line-clamp-1 font-medium">
                       {niche.typicalCharactersAndObjects.slice(0, 2).join(' · ')}
                     </span>
                   </div>
@@ -128,7 +127,7 @@ export const NicheSelector: React.FC<NicheSelectorProps> = ({
 
                 {/* Bottom Action Footer */}
                 <div className="pt-2 flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-500">
+                  <span className="text-xs font-semibold text-zinc-500">
                     Standard: {niche.defaultDurationSec}s · 9:16
                   </span>
 
@@ -141,11 +140,11 @@ export const NicheSelector: React.FC<NicheSelectorProps> = ({
                     className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       isSelected
                         ? 'bg-rose-600 text-white shadow-xs'
-                        : 'bg-slate-900 hover:bg-slate-800 text-white group-hover:bg-rose-600'
+                        : 'bg-zinc-800 hover:bg-zinc-700 text-white group-hover:bg-rose-600'
                     }`}
                   >
                     <span>{isSelected ? 'Nische aktiv' : 'Nische wählen'}</span>
-                    <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                    <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:tranzinc-x-0.5" />
                   </button>
                 </div>
               </div>

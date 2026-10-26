@@ -232,25 +232,25 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
   const isWide = video.aspectRatio === '16:9';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-md overflow-y-auto animate-in fade-in duration-200">
-      <div className={`w-full ${isWide ? 'max-w-6xl' : 'max-w-5xl'} bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-2xl flex flex-col lg:flex-row my-auto`}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-md overflow-y-auto animate-in fade-in duration-200">
+      <div className={`w-full ${isWide ? 'max-w-6xl' : 'max-w-5xl'} bg-zinc-950 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col lg:flex-row my-auto`}>
         
         {/* Left Column: Video Player Screen */}
-        <div className={`${isWide ? 'lg:w-[540px]' : 'lg:w-[420px]'} bg-slate-100 p-4 sm:p-6 flex flex-col items-center justify-center border-b lg:border-b-0 lg:border-r border-slate-200 relative`}>
+        <div className={`${isWide ? 'lg:w-[540px]' : 'lg:w-[420px]'} bg-black p-4 sm:p-6 flex flex-col items-center justify-center border-b lg:border-b-0 lg:border-r border-zinc-800 relative`}>
           
           {/* Canvas Box (9:16 or 16:9) */}
           <div
             onClick={togglePlay}
             className={`relative ${
               isWide ? 'aspect-video w-full max-w-[480px]' : 'aspect-[9/16] w-full max-w-[320px]'
-            } rounded-2xl overflow-hidden shadow-2xl bg-slate-900 cursor-pointer select-none group border border-slate-300`}
+            } rounded-2xl overflow-hidden shadow-2xl bg-black cursor-pointer select-none group border border-zinc-800`}
           >
             {/* Visual Frame: Real HTML5 Video if available, else Clean placeholder */}
             {isResolvingUrl ? (
-              <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-slate-900 text-slate-300">
+              <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-black text-zinc-400">
                 <Loader2 className="w-8 h-8 text-rose-500 animate-spin mb-2" />
-                <p className="text-xs font-semibold text-slate-200">Lade gesichertes Video...</p>
-                <p className="text-[10px] text-slate-400 mt-1">Sichere Verbindung zu Firebase Storage</p>
+                <p className="text-xs font-semibold text-white">Lade gesichertes Video...</p>
+                <p className="text-[10px] text-zinc-500 mt-1">Sichere Verbindung zu Firebase Storage</p>
               </div>
             ) : resolvedVideoUrl ? (
               <video
@@ -285,10 +285,10 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-slate-900 text-slate-300">
-                <Film className="w-10 h-10 text-slate-500 mb-2" />
+              <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-black text-zinc-500">
+                <Film className="w-10 h-10 text-zinc-700 mb-2" />
                 <p className="text-sm font-semibold text-white">Keine Videodatei verfügbar</p>
-                <p className="text-xs text-slate-400 mt-1">Dieses Video besitzt noch keinen gerenderten MP4-Stream.</p>
+                <p className="text-xs text-zinc-500 mt-1">Dieses Video besitzt noch keinen gerenderten MP4-Stream.</p>
               </div>
             )}
 
@@ -301,7 +301,7 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
                 <span>{video.templateName || 'Veo Video'}</span>
                 <span className="text-[9px] text-amber-300">{video.modelUsed || 'Veo 3.1'}</span>
               </span>
-              <span className="font-mono text-[10px] bg-black/60 backdrop-blur-md px-2 py-0.5 rounded text-slate-200">
+              <span className="font-mono text-[10px] bg-black/60 backdrop-blur-md px-2 py-0.5 rounded text-zinc-400">
                 {video.aspectRatio || '9:16'}
               </span>
             </div>
@@ -336,7 +336,7 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
               </div>
 
               {/* Time display */}
-              <div className="flex items-center justify-between text-[11px] text-slate-300 font-mono">
+              <div className="flex items-center justify-between text-[11px] text-zinc-400 font-mono">
                 <span>{currentTimeSec.toFixed(1)}s</span>
                 <span>{durationSec.toFixed(1)}s</span>
               </div>
@@ -345,18 +345,18 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
           </div>
 
           {/* Player controls toolbar below phone canvas (Bright styling) */}
-          <div className="w-full max-w-[320px] mt-4 flex items-center justify-between text-slate-700 px-2">
+          <div className="w-full max-w-[320px] mt-4 flex items-center justify-between text-zinc-400 px-2">
             <button
               onClick={togglePlay}
-              className="p-2 hover:text-slate-900 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
+              className="p-2 hover:text-white hover:bg-zinc-900 rounded-lg transition-colors cursor-pointer"
               title={isPlaying ? 'Pause' : 'Play'}
             >
-              {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-slate-800" />}
+              {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-zinc-400" />}
             </button>
 
             <button
               onClick={() => handleSeek(0)}
-              className="p-2 hover:text-slate-900 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
+              className="p-2 hover:text-white hover:bg-zinc-900 rounded-lg transition-colors cursor-pointer"
               title="Von vorne starten"
             >
               <RotateCcw className="w-4 h-4" />
@@ -364,16 +364,16 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
 
             <button
               onClick={() => setIsMuted((prev) => !prev)}
-              className="p-2 hover:text-slate-900 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
+              className="p-2 hover:text-white hover:bg-zinc-900 rounded-lg transition-colors cursor-pointer"
               title={isMuted ? 'Ton an' : 'Stumm'}
             >
-              {isMuted ? <VolumeX className="w-4 h-4 text-rose-600" /> : <Volume2 className="w-4 h-4" />}
+              {isMuted ? <VolumeX className="w-4 h-4 text-rose-500" /> : <Volume2 className="w-4 h-4" />}
             </button>
 
             <button
               onClick={() => setSubtitlesEnabled((prev) => !prev)}
               className={`p-2 transition-colors rounded-lg cursor-pointer ${
-                subtitlesEnabled ? 'text-amber-600 bg-amber-50' : 'text-slate-400 hover:bg-slate-200'
+                subtitlesEnabled ? 'text-amber-500 bg-amber-950/30' : 'text-zinc-500 hover:bg-zinc-900'
               }`}
               title="Untertitel ein/aus"
             >
@@ -385,13 +385,13 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
               disabled={isDownloading}
               className={`p-2 transition-colors rounded-lg cursor-pointer ${
                 isDownloading
-                  ? 'text-rose-600 bg-rose-50'
-                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200'
+                  ? 'text-rose-500 bg-rose-950/30'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
               }`}
               title="Video herunterladen (MP4)"
             >
               {isDownloading ? (
-                <Loader2 className="w-4 h-4 animate-spin text-rose-600" />
+                <Loader2 className="w-4 h-4 animate-spin text-rose-500" />
               ) : (
                 <Download className="w-4 h-4" />
               )}
@@ -401,7 +401,7 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
               onClick={() => {
                 setPlaybackSpeed((prev) => (prev === 1 ? 1.25 : prev === 1.25 ? 1.5 : 1));
               }}
-              className="px-2.5 py-1 text-xs font-mono font-semibold rounded-lg bg-white border border-slate-300 text-slate-800 hover:bg-slate-50 shadow-xs cursor-pointer"
+              className="px-2.5 py-1 text-xs font-mono font-semibold rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:bg-zinc-800 shadow-xs cursor-pointer"
               title="Wiedergabegeschwindigkeit"
             >
               {playbackSpeed}x
@@ -410,30 +410,29 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
         </div>
 
         {/* Right Column: Actions, Scenes Storyboard, Export, Details */}
-        <div className="flex-1 p-6 sm:p-8 flex flex-col justify-between space-y-6 bg-white">
+        <div className="flex-1 p-6 sm:p-8 flex flex-col justify-between space-y-6 bg-zinc-950">
           
           <div>
-            {/* Top Bar with Close button */}
-            <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-200">
+            <div className="flex justify-between items-start">
               <div>
-                <span className="text-xs font-mono text-emerald-600 font-bold uppercase tracking-wider">
+                <span className="text-xs font-mono text-emerald-500 font-bold uppercase tracking-wider">
                   Video erfolgreich generiert
                 </span>
-                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
+                <h2 className="text-xl sm:text-2xl font-bold text-white mt-1">
                   {video.title}
                 </h2>
-                <div className="flex items-center gap-3 text-xs text-slate-500 mt-2">
-                  <span>Template: <strong className="text-slate-900">{video.templateName}</strong></span>
-                  <span aria-hidden="true" className="text-slate-300">·</span>
+                <div className="flex items-center gap-3 text-xs text-zinc-500 mt-2">
+                  <span>Template: <strong className="text-white">{video.templateName}</strong></span>
+                  <span aria-hidden="true" className="text-zinc-800">·</span>
                   <span className="font-mono tabular-nums">{video.durationSec}s Länge</span>
-                  <span aria-hidden="true" className="text-slate-300">·</span>
-                  <span className="font-mono tabular-nums font-semibold text-slate-800">{video.creditUsed} Credits</span>
+                  <span aria-hidden="true" className="text-zinc-800">·</span>
+                  <span className="font-mono tabular-nums font-semibold text-zinc-300">{video.creditUsed} Credits</span>
                 </div>
               </div>
 
               <button
                 onClick={onClose}
-                className="p-2 rounded-xl text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="p-2 rounded-xl text-zinc-500 hover:text-white hover:bg-zinc-900 transition-colors cursor-pointer"
                 title="Schließen"
               >
                 <X className="w-5 h-5" />
@@ -442,12 +441,12 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
 
             {/* Storyboard Scene Breakdown */}
             <div className="mt-6 space-y-3">
-              <div className="text-xs font-bold text-slate-900 flex items-center justify-between">
+              <div className="text-xs font-bold text-white flex items-center justify-between">
                 <span className="flex items-center gap-1.5">
-                  <Layers className="w-3.5 h-3.5 text-rose-600" />
+                  <Layers className="w-3.5 h-3.5 text-rose-500" />
                   <span>Szenen-Storyboard ({scenes.length} Szenen)</span>
                 </span>
-                <span className="text-[11px] text-slate-500 font-normal">Klicke eine Szene zum Anspringen</span>
+                <span className="text-[11px] text-zinc-500 font-normal">Klicke eine Szene zum Anspringen</span>
               </div>
 
               <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
@@ -461,22 +460,22 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
                       onClick={() => handleSeek(sceneStart)}
                       className={`p-3 rounded-xl border text-xs cursor-pointer transition-all ${
                         isCurrent
-                          ? 'bg-rose-50 border-rose-300 text-slate-900 shadow-xs'
-                          : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-100'
+                          ? 'bg-rose-950/30 border-rose-800 text-white shadow-xs'
+                          : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:bg-zinc-800'
                       }`}
                     >
                       <div className="flex items-center justify-between font-semibold">
-                        <span className="text-slate-900 font-bold">
+                        <span className="text-white font-bold">
                           Szene {sc.sceneNumber}: {sc.speaker}
                         </span>
-                        <span className="font-mono text-[10px] text-slate-500 font-medium">
+                        <span className="font-mono text-[10px] text-zinc-500 font-medium">
                           {sc.durationSec}s
                         </span>
                       </div>
-                      <p className="italic text-slate-800 mt-1 line-clamp-1">
+                      <p className="italic text-zinc-300 mt-1 line-clamp-1">
                         „{sc.spokenText}“
                       </p>
-                      <div className="text-[11px] text-slate-500 mt-1 line-clamp-1">
+                      <div className="text-[11px] text-zinc-500 mt-1 line-clamp-1">
                         {sc.visualAction}
                       </div>
                     </div>
@@ -487,18 +486,18 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
           </div>
 
           {/* Action Buttons: Download, Progress, Format Options, Regenerate */}
-          <div className="space-y-3 pt-6 border-t border-slate-200">
+          <div className="space-y-3 pt-6 border-t border-zinc-800">
             {/* Download Progress Bar */}
             {isDownloading && (
-              <div className="p-3 bg-rose-50/90 border border-rose-200 rounded-2xl space-y-2 animate-in fade-in duration-200">
-                <div className="flex items-center justify-between text-xs font-semibold text-rose-950">
+              <div className="p-3 bg-rose-950/30 border border-rose-900/50 rounded-2xl space-y-2 animate-in fade-in duration-200">
+                <div className="flex items-center justify-between text-xs font-semibold text-rose-100">
                   <span className="flex items-center gap-2">
-                    <Loader2 className="w-3.5 h-3.5 animate-spin text-rose-600" />
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-rose-500" />
                     <span>{downloadStatusText || 'Wird vorbereitet...'}</span>
                   </span>
-                  <span className="font-mono text-rose-700 font-bold">{downloadProgress}%</span>
+                  <span className="font-mono text-rose-400 font-bold">{downloadProgress}%</span>
                 </div>
-                <div className="w-full bg-rose-200/60 h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-rose-900/50 h-2 rounded-full overflow-hidden">
                   <div
                     className="bg-rose-600 h-full transition-all duration-200 rounded-full shadow-xs"
                     style={{ width: `${Math.max(5, downloadProgress)}%` }}
@@ -509,16 +508,16 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
 
             {/* Success Toast */}
             {downloadSuccess && (
-              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs font-semibold text-emerald-900 animate-in fade-in duration-200 shadow-xs">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <div className="p-3 bg-emerald-950/30 border border-emerald-900/50 rounded-2xl flex items-center gap-2.5 text-xs font-semibold text-emerald-400 animate-in fade-in duration-200 shadow-xs">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                 <span>{downloadSuccess}</span>
               </div>
             )}
 
             {/* Error Toast */}
             {downloadError && (
-              <div className="p-3 bg-rose-50 border border-rose-200 rounded-2xl flex items-center gap-2.5 text-xs font-semibold text-rose-900 animate-in fade-in duration-200 shadow-xs">
-                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+              <div className="p-3 bg-rose-950/30 border border-rose-900/50 rounded-2xl flex items-center gap-2.5 text-xs font-semibold text-rose-400 animate-in fade-in duration-200 shadow-xs">
+                <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
                 <span>{downloadError}</span>
               </div>
             )}
@@ -557,38 +556,38 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
 
                 {/* Export Options Dropdown */}
                 {showExportMenu && (
-                  <div className="absolute left-0 right-0 bottom-full mb-2 bg-white border border-slate-200 rounded-2xl shadow-xl z-30 p-1.5 space-y-1 animate-in fade-in slide-in-from-bottom-2">
-                    <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  <div className="absolute left-0 right-0 bottom-full mb-2 bg-zinc-900 border border-zinc-800 rounded-2xl shadow-xl z-30 p-1.5 space-y-1 animate-in fade-in slide-in-from-bottom-2">
+                    <div className="px-3 py-1.5 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
                       Export-Formate
                     </div>
                     <button
                       onClick={() => handleDownloadVideo('video')}
-                      className="w-full p-2.5 rounded-xl hover:bg-slate-50 text-left flex items-start gap-2.5 transition-colors cursor-pointer"
+                      className="w-full p-2.5 rounded-xl hover:bg-zinc-800 text-left flex items-start gap-2.5 transition-colors cursor-pointer"
                     >
-                      <VideoIcon className="w-4 h-4 text-rose-600 mt-0.5 shrink-0" />
+                      <VideoIcon className="w-4 h-4 text-rose-500 mt-0.5 shrink-0" />
                       <div>
-                        <div className="text-xs font-bold text-slate-900">Video (MP4 / WebM HD)</div>
-                        <div className="text-[11px] text-slate-500">Für TikTok, Reels & YouTube Shorts</div>
+                        <div className="text-xs font-bold text-white">Video (MP4 / WebM HD)</div>
+                        <div className="text-[11px] text-zinc-500">Für TikTok, Reels & YouTube Shorts</div>
                       </div>
                     </button>
                     <button
                       onClick={() => handleDownloadVideo('srt')}
-                      className="w-full p-2.5 rounded-xl hover:bg-slate-50 text-left flex items-start gap-2.5 transition-colors cursor-pointer"
+                      className="w-full p-2.5 rounded-xl hover:bg-zinc-800 text-left flex items-start gap-2.5 transition-colors cursor-pointer"
                     >
-                      <FileCode className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+                      <FileCode className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
                       <div>
-                        <div className="text-xs font-bold text-slate-900">Untertitel-Datei (.SRT)</div>
-                        <div className="text-[11px] text-slate-500">Mit exakten Timecodes für Untertitel-Upload</div>
+                        <div className="text-xs font-bold text-white">Untertitel-Datei (.SRT)</div>
+                        <div className="text-[11px] text-zinc-500">Mit exakten Timecodes für Untertitel-Upload</div>
                       </div>
                     </button>
                     <button
                       onClick={() => handleDownloadVideo('script')}
-                      className="w-full p-2.5 rounded-xl hover:bg-slate-50 text-left flex items-start gap-2.5 transition-colors cursor-pointer"
+                      className="w-full p-2.5 rounded-xl hover:bg-zinc-800 text-left flex items-start gap-2.5 transition-colors cursor-pointer"
                     >
-                      <FileText className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
+                      <FileText className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
                       <div>
-                        <div className="text-xs font-bold text-slate-900">Drehbuch & Prompts (.TXT)</div>
-                        <div className="text-[11px] text-slate-500">Vollständiges Skript mit Sprechertexten</div>
+                        <div className="text-xs font-bold text-white">Drehbuch & Prompts (.TXT)</div>
+                        <div className="text-[11px] text-zinc-500">Vollständiges Skript mit Sprechertexten</div>
                       </div>
                     </button>
                   </div>
@@ -598,23 +597,23 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
               {/* Share / Copy Link Button */}
               <button
                 onClick={handleShare}
-                className="w-full py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 font-semibold rounded-xl text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                className="w-full py-3 px-4 bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-800 font-semibold rounded-xl text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
               >
-                {isCopied ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4 text-slate-600" />}
+                {isCopied ? <Check className="w-4 h-4 text-emerald-500" /> : <Share2 className="w-4 h-4 text-zinc-500" />}
                 <span>{isCopied ? 'Link kopiert!' : 'Teilen & Link kopieren'}</span>
               </button>
             </div>
 
             {/* Quick compatibility hint */}
-            <div className="text-[11px] text-slate-500 flex items-center justify-between px-1">
-              <span>Format: <strong className="text-slate-800">{video.aspectRatio || '9:16'} HD</strong></span>
+            <div className="text-[11px] text-zinc-500 flex items-center justify-between px-1">
+              <span>Format: <strong className="text-zinc-300">{video.aspectRatio || '9:16'} HD</strong></span>
               <span>Direkt kompatibel mit TikTok, Reels & Shorts</span>
             </div>
 
             <div className="flex flex-wrap items-center gap-2 pt-1">
               <button
                 onClick={onRegenerate}
-                className="flex-1 py-2 px-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                className="flex-1 py-2 px-3 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Erneut generieren</span>
@@ -622,7 +621,7 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
 
               <button
                 onClick={onCreateSimilar}
-                className="flex-1 py-2 px-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                className="flex-1 py-2 px-3 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                 <span>Ähnliches Video erstellen</span>
@@ -630,7 +629,7 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
 
               <button
                 onClick={onClose}
-                className="py-2 px-3 text-slate-500 hover:text-slate-800 text-xs font-medium cursor-pointer"
+                className="py-2 px-3 text-zinc-500 hover:text-zinc-300 text-xs font-medium cursor-pointer"
               >
                 Zur Library
               </button>

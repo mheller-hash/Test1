@@ -445,7 +445,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-black text-[#f8fafc] flex flex-col font-sans">
       
       {/* Top Bar Navigation */}
       <Navbar
@@ -486,16 +486,16 @@ export default function App() {
             <div className="mb-8">
               <button
                 onClick={() => setCurrentTab('create')}
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-slate-800 mb-4 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-500 hover:text-zinc-300 mb-4 transition-colors cursor-pointer"
               >
                 ← Zurück zum Studio
               </button>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+                  <h1 className="text-3xl font-extrabold text-white tracking-tight">
                     Video-Nischen
                   </h1>
-                  <p className="text-slate-600 mt-1 max-w-2xl text-sm">
+                  <p className="text-zinc-400 mt-1 max-w-2xl text-sm">
                     Wähle eine spezialisierte Themen-Nische mit maßgeschneiderten Bildstilen, Storytelling-Profilen und Szene-Mustern für deinen nächsten Short.
                   </p>
                 </div>

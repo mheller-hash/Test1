@@ -58,30 +58,30 @@ export const AddFileModal: React.FC<{ onClose: () => void }> = ({ onClose }) => 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl space-y-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-zinc-950 border border-zinc-800 rounded-3xl p-6 shadow-2xl space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold">Datei hochladen</h3>
-          <button type="button" onClick={onClose}><X className="w-4 h-4" /></button>
+          <h3 className="text-lg font-bold text-white">Datei hochladen</h3>
+          <button type="button" onClick={onClose} className="text-zinc-500 hover:text-white"><X className="w-4 h-4" /></button>
         </div>
         
         <div 
           onClick={() => fileInputRef.current?.click()}
-          className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center cursor-pointer hover:border-rose-400 transition-colors"
+          className="border-2 border-dashed border-zinc-800 rounded-xl p-6 text-center cursor-pointer hover:border-rose-500/50 transition-colors bg-zinc-900/50"
         >
           <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
-          <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-          <p className="text-xs text-slate-600">{file ? file.name : 'Datei auswählen'}</p>
+          <Upload className="w-8 h-8 text-zinc-500 mx-auto mb-2" />
+          <p className="text-xs text-zinc-400">{file ? file.name : 'Datei auswählen'}</p>
         </div>
 
         {error && <p className="text-xs text-red-500">{error}</p>}
         {loading && (
-          <div className="w-full bg-slate-100 rounded-full h-2">
+          <div className="w-full bg-zinc-900 rounded-full h-2 overflow-hidden">
             <div className="bg-rose-600 h-2 rounded-full transition-all" style={{ width: `${progress}%` }} />
           </div>
         )}
         
-        <button type="submit" disabled={loading || !file} className="w-full py-3 bg-rose-600 text-white font-semibold rounded-xl text-sm cursor-pointer disabled:bg-slate-300">
+        <button type="submit" disabled={loading || !file} className="w-full py-3 bg-rose-600 hover:bg-rose-500 text-white font-semibold rounded-xl text-sm cursor-pointer disabled:bg-zinc-800 disabled:text-zinc-600 transition-colors">
           {loading ? `Wird hochgeladen (${Math.round(progress)}%)...` : 'Hochladen'}
         </button>
       </form>

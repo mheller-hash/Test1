@@ -84,25 +84,25 @@ export const Pricing: React.FC<PricingProps> = ({ user, authUser, onUpdatePlan, 
       
       {/* Title */}
       <div className="text-center max-w-2xl mx-auto space-y-3">
-        <span className="text-xs font-mono text-rose-600 font-semibold uppercase tracking-wider">
+        <span className="text-xs font-mono text-rose-500 font-semibold uppercase tracking-wider">
           Transparente Credit-Pakete
         </span>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-white">
           Einfache Preise. Volle Kontrolle.
         </h1>
-        <p className="text-sm text-slate-600 leading-relaxed">
+        <p className="text-sm text-zinc-400 leading-relaxed">
           Wähle das passende Paket für deine Content-Frequenz. Keine versteckten Kosten, jederzeit kündbar.
         </p>
 
         {/* Monthly / Annual Toggle */}
         <div className="pt-4 flex items-center justify-center">
-          <div className="p-1 bg-slate-100 border border-slate-200 rounded-xl inline-flex items-center gap-1">
+          <div className="p-1 bg-zinc-900 border border-zinc-800 rounded-xl inline-flex items-center gap-1">
             <button
               onClick={() => setBillingCycle('monthly')}
               className={`px-4 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer ${
                 billingCycle === 'monthly'
-                  ? 'bg-white text-slate-900 font-semibold shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-zinc-800 text-white font-semibold shadow-xs'
+                  : 'text-zinc-500 hover:text-white'
               }`}
             >
               Monatlich
@@ -111,12 +111,12 @@ export const Pricing: React.FC<PricingProps> = ({ user, authUser, onUpdatePlan, 
               onClick={() => setBillingCycle('annual')}
               className={`px-4 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer ${
                 billingCycle === 'annual'
-                  ? 'bg-white text-slate-900 font-semibold shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-zinc-800 text-white font-semibold shadow-xs'
+                  : 'text-zinc-500 hover:text-white'
               }`}
             >
               <span>Jährlich</span>
-              <span className="text-[10px] bg-rose-100 text-rose-700 px-1.5 py-0.2 rounded font-bold">
+              <span className="text-[10px] bg-rose-950 text-rose-400 px-1.5 py-0.2 rounded font-bold border border-rose-900/50">
                 -20%
               </span>
             </button>
@@ -125,7 +125,7 @@ export const Pricing: React.FC<PricingProps> = ({ user, authUser, onUpdatePlan, 
       </div>
 
       {notification && (
-        <div className="max-w-md mx-auto p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs text-center font-medium shadow-xs">
+        <div className="max-w-md mx-auto p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-900/50 text-emerald-400 text-xs text-center font-medium shadow-xs">
           {notification}
         </div>
       )}
@@ -141,8 +141,8 @@ export const Pricing: React.FC<PricingProps> = ({ user, authUser, onUpdatePlan, 
               key={plan.id}
               className={`rounded-3xl p-6 sm:p-8 flex flex-col justify-between border transition-all ${
                 plan.isPopular
-                  ? 'bg-white border-rose-500 shadow-xl ring-2 ring-rose-500/15 relative'
-                  : 'bg-white border-slate-200 shadow-xs'
+                  ? 'bg-zinc-950 border-rose-500 shadow-xl ring-2 ring-rose-500/15 relative'
+                  : 'bg-zinc-950 border-zinc-800 shadow-xs'
               }`}
             >
               {plan.isPopular && (
@@ -153,37 +153,37 @@ export const Pricing: React.FC<PricingProps> = ({ user, authUser, onUpdatePlan, 
 
               <div>
                 <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-slate-900 text-xl">{plan.name}</h3>
-                  <div className="flex items-center gap-1 text-xs text-amber-600 font-mono font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                  <h3 className="font-bold text-white text-xl">{plan.name}</h3>
+                  <div className="flex items-center gap-1 text-xs text-amber-500 font-mono font-semibold bg-amber-950/30 px-2 py-0.5 rounded border border-amber-900/50">
                     <Coins className="w-3.5 h-3.5 text-amber-500" />
                     <span>{plan.creditsMonthly} Credits</span>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-500 mt-1 leading-snug">
+                <p className="text-xs text-zinc-400 mt-1 leading-snug">
                   {plan.subtitle}
                 </p>
 
                 <div className="mt-6 flex items-baseline gap-1">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-mono tabular-nums">
+                  <span className="text-3xl sm:text-4xl font-extrabold text-white font-mono tabular-nums">
                     {price}€
                   </span>
-                  <span className="text-xs text-slate-500">/ Monat</span>
+                  <span className="text-xs text-zinc-500">/ Monat</span>
                 </div>
 
                 {billingCycle === 'annual' && plan.priceAnnual > 0 && (
-                  <div className="text-[11px] text-slate-500 mt-1">
+                  <div className="text-[11px] text-zinc-500 mt-1">
                     Jährlich abgerechnet ({plan.priceAnnual * 12}€/Jahr)
                   </div>
                 )}
 
                 {/* Features List */}
-                <div className="mt-8 space-y-3 border-t border-slate-100 pt-6">
-                  <div className="text-xs font-semibold text-slate-900">Enthaltene Leistungen:</div>
+                <div className="mt-8 space-y-3 border-t border-zinc-800 pt-6">
+                  <div className="text-xs font-semibold text-white">Enthaltene Leistungen:</div>
                   <ul className="space-y-2.5">
                     {plan.features.map((feat, idx) => (
-                      <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-600">
-                        <Check className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                      <li key={idx} className="flex items-start gap-2.5 text-xs text-zinc-400">
+                        <Check className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
                         <span>{feat}</span>
                       </li>
                     ))}
@@ -192,16 +192,16 @@ export const Pricing: React.FC<PricingProps> = ({ user, authUser, onUpdatePlan, 
               </div>
 
               {/* Action Button */}
-              <div className="mt-8 pt-6 border-t border-slate-100">
+              <div className="mt-8 pt-6 border-t border-zinc-900">
                 <button
                   onClick={() => handleSelectPlan(plan.id, plan.creditsMonthly)}
                   disabled={isCurrent}
                   className={`w-full py-3 px-4 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                     isCurrent
-                      ? 'bg-slate-100 text-slate-400 cursor-default border border-slate-200'
+                      ? 'bg-zinc-900 text-zinc-600 cursor-default border border-zinc-800'
                       : plan.isPopular
                       ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-md shadow-rose-500/25'
-                      : 'bg-slate-900 hover:bg-slate-800 text-white'
+                      : 'bg-zinc-800 hover:bg-zinc-700 text-white'
                   }`}
                 >
                   {isCurrent ? (
@@ -221,9 +221,9 @@ export const Pricing: React.FC<PricingProps> = ({ user, authUser, onUpdatePlan, 
       </div>
 
       {/* Credit Top-up FAQ */}
-      <div className="p-6 rounded-2xl bg-white border border-slate-200 max-w-3xl mx-auto space-y-3 shadow-xs">
-        <h4 className="font-bold text-slate-900 text-sm">Wie funktioniert das Credit-System?</h4>
-        <div className="text-xs text-slate-600 space-y-2 leading-relaxed">
+      <div className="p-6 rounded-2xl bg-zinc-950 border border-zinc-800 max-w-3xl mx-auto space-y-3 shadow-xs">
+        <h4 className="font-bold text-white text-sm">Wie funktioniert das Credit-System?</h4>
+        <div className="text-xs text-zinc-400 space-y-2 leading-relaxed">
           <p>
             Jedes Video verbraucht je nach Format und Dauer zwischen 10 und 20 Credits (z.B. 15s Video = 10 Credits, 30s Video = 15 Credits).
           </p>

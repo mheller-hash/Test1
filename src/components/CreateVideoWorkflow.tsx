@@ -391,24 +391,24 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 font-sans">
       
       {/* Header bar with Back button and Credits indicator */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
         <div className="flex items-center gap-3">
           <button
             onClick={onBackToDiscover}
-            className="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+            className="p-2 rounded-xl border border-zinc-800 bg-zinc-950 hover:bg-zinc-900 text-zinc-400 hover:text-white transition-colors cursor-pointer"
             title="Zurück zur Übersicht"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
-                <Sparkles className="w-3 h-3 text-rose-600" />
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-950/30 text-rose-400 border border-rose-900/50">
+                <Sparkles className="w-3 h-3 text-rose-500" />
                 Veo 3.1 Studio
               </span>
-              <span className="text-xs text-slate-500 font-medium">Schritt {step} von 6</span>
+              <span className="text-xs text-zinc-500 font-medium">Schritt {step} von 6</span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 mt-0.5">
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white mt-0.5">
               Video erstellen & strukturieren
             </h1>
           </div>
@@ -416,16 +416,16 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
 
         {/* User Balance & Cost Pill */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs">
-            <span className="text-slate-500">Kosten:</span>
-            <span className="font-mono font-bold text-slate-900">{creditCost} Credits</span>
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-xs">
+            <span className="text-zinc-500">Kosten:</span>
+            <span className="font-mono font-bold text-white">{creditCost} Credits</span>
           </div>
 
           <button
             onClick={onOpenCreditsModal}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-800 hover:bg-amber-100 transition-colors cursor-pointer"
+            className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-950/30 border border-amber-900/50 text-xs font-semibold text-amber-400 hover:bg-amber-900/50 transition-colors cursor-pointer"
           >
-            <Coins className="w-3.5 h-3.5 text-amber-600" />
+            <Coins className="w-3.5 h-3.5 text-amber-500" />
             <span>Guthaben: {isLoggedIn ? userCredits : 0} Credits</span>
           </button>
         </div>
@@ -496,8 +496,8 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                 isActive
                   ? 'bg-rose-600 border-rose-600 text-white font-bold shadow-sm shadow-rose-500/20'
                   : isPassed
-                  ? 'bg-emerald-50 border-emerald-200 text-emerald-800 font-semibold'
-                  : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'
+                  ? 'bg-emerald-950/30 border-emerald-900/50 text-emerald-400 font-semibold'
+                  : 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:border-zinc-700'
               }`}
             >
               <Icon className="w-3.5 h-3.5 shrink-0" />
@@ -509,13 +509,13 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
 
       {/* STEP 1: IDEA & CONCEPT */}
       {step === 1 && (
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div className="bg-zinc-950 rounded-3xl border border-zinc-800 p-6 sm:p-8 space-y-6 shadow-sm">
           <div>
-            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-rose-600" />
+            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-rose-500" />
               Was soll in deinem Video passieren?
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            <p className="text-xs sm:text-sm text-zinc-500 mt-1">
               Beschreibe deine zentrale Idee. Es kann ein kurzer Satz oder eine ausführliche Handlungsbeschreibung sein.
             </p>
           </div>
@@ -526,7 +526,7 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
               placeholder="Beispiel: Eine animierte Erdbeere und eine Banane liefern sich nachts ein rasantes Wettrennen durch einen Supermarkt..."
               value={form.idea}
               onChange={(e) => setForm((prev) => ({ ...prev, idea: e.target.value }))}
-              className="w-full rounded-2xl border border-slate-200 p-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 transition-all resize-y"
+              className="w-full bg-zinc-900 rounded-2xl border border-zinc-800 p-4 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 transition-all resize-y"
             />
             <div className="flex items-center justify-between text-xs text-slate-400 px-1">
               <span>Je präziser die Kernhandlung, desto besser das Veo-Ergebnis.</span>
@@ -537,13 +537,13 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
           {/* Quick Idea Presets tailored to Active Niche */}
           <div className="pt-2">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
                 Inspirations-Ideen für Nische "{currentNiche.name}":
               </span>
               <button
                 type="button"
                 onClick={() => setIsNicheModalOpen(true)}
-                className="text-xs text-rose-600 hover:text-rose-700 font-semibold cursor-pointer"
+                className="text-xs text-rose-500 hover:text-rose-400 font-semibold cursor-pointer"
               >
                 Nische wechseln
               </button>
@@ -555,16 +555,16 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                   key={idx}
                   type="button"
                   onClick={() => setForm((prev) => ({ ...prev, idea: idea.promptSnippet }))}
-                  className="text-left p-3.5 rounded-2xl border border-rose-200/80 bg-rose-50/40 hover:bg-rose-50 hover:border-rose-300 transition-all group cursor-pointer"
+                  className="text-left p-3.5 rounded-2xl border border-rose-900/50 bg-rose-950/20 hover:bg-rose-950/40 hover:border-rose-800 transition-all group cursor-pointer"
                 >
-                  <div className="font-bold text-xs text-slate-900 group-hover:text-rose-700 flex items-center justify-between">
+                  <div className="font-bold text-xs text-white group-hover:text-rose-400 flex items-center justify-between">
                     <span className="flex items-center gap-1.5">
                       <span>{currentNiche.accent.icon}</span>
                       <span>{idea.title}</span>
                     </span>
                     <Sparkles className="w-3 h-3 text-rose-500 shrink-0" />
                   </div>
-                  <p className="text-[11px] text-slate-600 mt-1 line-clamp-2 leading-relaxed">
+                  <p className="text-[11px] text-zinc-400 mt-1 line-clamp-2 leading-relaxed">
                     {idea.hook}
                   </p>
                 </button>
@@ -572,8 +572,8 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
             </div>
 
             {/* General presets toggle */}
-            <details className="text-xs text-slate-500 group">
-              <summary className="cursor-pointer font-medium hover:text-slate-800 list-none flex items-center gap-1.5">
+            <details className="text-xs text-zinc-500 group">
+              <summary className="cursor-pointer font-medium hover:text-zinc-300 list-none flex items-center gap-1.5">
                 <ChevronRight className="w-3.5 h-3.5 group-open:rotate-90 transition-transform" />
                 <span>Weitere allgemeine Format-Vorlagen anzeigen</span>
               </summary>
@@ -583,10 +583,10 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                     key={idx}
                     type="button"
                     onClick={() => handleApplyPreset(preset)}
-                    className="text-left p-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-slate-50/60 hover:bg-slate-100/60 transition-all cursor-pointer"
+                    className="text-left p-3 rounded-xl border border-zinc-800 hover:border-zinc-700 bg-zinc-900 hover:bg-zinc-800 transition-all cursor-pointer"
                   >
-                    <div className="font-semibold text-xs text-slate-800 line-clamp-1">{preset.title}</div>
-                    <p className="text-[10px] text-slate-500 mt-0.5 line-clamp-2">{preset.desc}</p>
+                    <div className="font-semibold text-xs text-white line-clamp-1">{preset.title}</div>
+                    <p className="text-[10px] text-zinc-500 mt-0.5 line-clamp-2">{preset.desc}</p>
                   </button>
                 ))}
               </div>
@@ -594,7 +594,7 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
           </div>
 
           {/* Action Navigation */}
-          <div className="flex justify-end pt-4 border-t border-slate-100">
+          <div className="flex justify-end pt-4 border-t border-zinc-900">
             <button
               disabled={form.idea.trim().length === 0}
               onClick={() => setStep(2)}
@@ -609,14 +609,14 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
 
       {/* STEP 2: CHARACTERS / OBJECTS */}
       {step === 2 && (
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div className="bg-zinc-950 rounded-3xl border border-zinc-800 p-6 sm:p-8 space-y-6 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <Users className="w-5 h-5 text-rose-600" />
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <Users className="w-5 h-5 text-rose-500" />
                 Hauptfiguren & Objekte definieren (Optional)
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              <p className="text-xs sm:text-sm text-zinc-500 mt-1">
                 Füge Charaktere oder zentrale Objekte hinzu, damit Veo ihr Aussehen konsistent beibehält.
               </p>
             </div>
@@ -624,25 +624,25 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
             <button
               type="button"
               onClick={handleAddCharacter}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer self-start sm:self-auto"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-xs font-semibold transition-colors cursor-pointer self-start sm:self-auto border border-zinc-800"
             >
-              <Plus className="w-4 h-4 text-rose-600" />
+              <Plus className="w-4 h-4 text-rose-500" />
               <span>Figur hinzufügen</span>
             </button>
           </div>
 
           {form.characters.length === 0 ? (
-            <div className="text-center py-10 px-4 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 space-y-3">
-              <Users className="w-8 h-8 text-slate-300 mx-auto" />
-              <p className="text-xs text-slate-500 max-w-sm mx-auto">
+            <div className="text-center py-10 px-4 rounded-2xl border-2 border-dashed border-zinc-800 bg-zinc-900/50 space-y-3">
+              <Users className="w-8 h-8 text-zinc-700 mx-auto" />
+              <p className="text-xs text-zinc-500 max-w-sm mx-auto">
                 Noch keine Figuren angelegt. Veo nutzt automatisch die in deiner Idee genannten Subjekte, oder du fügst hier feste Figuren hinzu.
               </p>
               <button
                 type="button"
                 onClick={handleAddCharacter}
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-rose-400 text-xs font-semibold text-slate-700 shadow-2xs transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-rose-500/50 text-xs font-semibold text-zinc-300 shadow-2xs transition-colors cursor-pointer"
               >
-                <Plus className="w-3.5 h-3.5 text-rose-600" />
+                <Plus className="w-3.5 h-3.5 text-rose-500" />
                 <span>Erste Figur anlegen</span>
               </button>
             </div>
@@ -651,11 +651,11 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
               {form.characters.map((char, index) => (
                 <div
                   key={char.id}
-                  className="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-3 relative group"
+                  className="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 space-y-3 relative group"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                      <span className="w-5 h-5 rounded-full bg-rose-100 text-rose-700 text-[10px] flex items-center justify-center font-bold">
+                    <span className="text-xs font-bold text-zinc-300 flex items-center gap-1.5">
+                      <span className="w-5 h-5 rounded-full bg-rose-950 text-rose-400 text-[10px] flex items-center justify-center font-bold">
                         {index + 1}
                       </span>
                       {char.name ? char.name : `Figur #${index + 1}`}
@@ -663,7 +663,7 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                     <button
                       type="button"
                       onClick={() => handleRemoveCharacter(char.id)}
-                      className="text-slate-400 hover:text-rose-600 transition-colors p-1 cursor-pointer"
+                      className="text-zinc-600 hover:text-rose-500 transition-colors p-1 cursor-pointer"
                       title="Figur löschen"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -672,7 +672,7 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                     <div>
-                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                      <label className="block text-[11px] font-semibold text-zinc-500 mb-1">
                         Name / Rolle *
                       </label>
                       <input
@@ -680,12 +680,12 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                         placeholder="z. B. Erdbeere, Detektiv Müller, Roter Sportwagen"
                         value={char.name}
                         onChange={(e) => handleUpdateCharacter(char.id, 'name', e.target.value)}
-                        className="w-full bg-white rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-rose-500"
+                        className="w-full bg-zinc-950 rounded-xl border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                      <label className="block text-[11px] font-semibold text-zinc-500 mb-1">
                         Aussehen / Optik
                       </label>
                       <input
@@ -693,12 +693,12 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                         placeholder="z. B. leuchtend rot mit goldenen Rennstreifen"
                         value={char.appearance || ''}
                         onChange={(e) => handleUpdateCharacter(char.id, 'appearance', e.target.value)}
-                        className="w-full bg-white rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-rose-500"
+                        className="w-full bg-zinc-950 rounded-xl border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                      <label className="block text-[11px] font-semibold text-zinc-500 mb-1">
                         Verhalten / Persönlichkeit
                       </label>
                       <input
@@ -706,12 +706,12 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                         placeholder="z. B. ehrgeizig, frech, übermütig"
                         value={char.personality || ''}
                         onChange={(e) => handleUpdateCharacter(char.id, 'personality', e.target.value)}
-                        className="w-full bg-white rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-rose-500"
+                        className="w-full bg-zinc-950 rounded-xl border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                      <label className="block text-[11px] font-semibold text-zinc-500 mb-1">
                         Kleidung / Accessoires
                       </label>
                       <input
@@ -719,7 +719,7 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                         placeholder="z. B. grünes Stirnband, dunkle Sonnenbrille"
                         value={char.clothing || ''}
                         onChange={(e) => handleUpdateCharacter(char.id, 'clothing', e.target.value)}
-                        className="w-full bg-white rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-rose-500"
+                        className="w-full bg-zinc-950 rounded-xl border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500"
                       />
                     </div>
                   </div>
@@ -728,10 +728,10 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
             </div>
           )}
 
-          <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+          <div className="flex items-center justify-between pt-4 border-t border-zinc-900">
             <button
               onClick={() => setStep(1)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 font-semibold text-xs transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-zinc-500 hover:text-white font-semibold text-xs transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Zurück</span>
@@ -749,20 +749,20 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
 
       {/* STEP 3: ENVIRONMENT & ATMOSPHERE */}
       {step === 3 && (
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div className="bg-zinc-950 rounded-3xl border border-zinc-800 p-6 sm:p-8 space-y-6 shadow-sm">
           <div>
-            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-rose-600" />
+            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-rose-500" />
               Umgebung, Licht & Atmosphäre
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            <p className="text-xs sm:text-sm text-zinc-500 mt-1">
               Wo und wann spielt deine Szene? Diese Details sorgen für kinoreife Beleuchtung und Tiefenwirkung.
             </p>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                 Schauplatz / Location
               </label>
               <input
@@ -775,13 +775,13 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                     environment: { ...prev.environment, location: e.target.value },
                   }))
                 }
-                className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-rose-500"
+                className="w-full bg-zinc-900 rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                   Tageszeit / Lichtverhältnisse
                 </label>
                 <input
@@ -794,12 +794,12 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                       environment: { ...prev.environment, timeOfDay: e.target.value },
                     }))
                   }
-                  className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-rose-500"
+                  className="w-full bg-zinc-900 rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                   Wetter / Stimmung & Atmosphäre
                 </label>
                 <input
@@ -812,16 +812,16 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                       environment: { ...prev.environment, weatherOrAtmosphere: e.target.value },
                     }))
                   }
-                  className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-rose-500"
+                  className="w-full bg-zinc-900 rounded-xl border border-zinc-800 px-4 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500"
                 />
               </div>
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+          <div className="flex items-center justify-between pt-4 border-t border-zinc-900">
             <button
               onClick={() => setStep(2)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 font-semibold text-xs transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-zinc-500 hover:text-white font-semibold text-xs transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Zurück</span>
@@ -839,14 +839,14 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
 
       {/* STEP 4: STORY & SCENES */}
       {step === 4 && (
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div className="bg-zinc-950 rounded-3xl border border-zinc-800 p-6 sm:p-8 space-y-6 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <Clapperboard className="w-5 h-5 text-rose-600" />
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <Clapperboard className="w-5 h-5 text-rose-500" />
                 Handlungsablauf & Szenen (Optional)
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              <p className="text-xs sm:text-sm text-zinc-500 mt-1">
                 Unterteile dein Video in chronologische Szenen. Wenn du keine Szenen anlegst, wird automatisch deine Kernidee als Gesamtszene gerendert.
               </p>
             </div>
@@ -854,20 +854,20 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
             <button
               type="button"
               onClick={handleAddScene}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer self-start sm:self-auto"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-xs font-semibold transition-colors cursor-pointer self-start sm:self-auto border border-zinc-800"
             >
-              <Plus className="w-4 h-4 text-rose-600" />
+              <Plus className="w-4 h-4 text-rose-500" />
               <span>Szene hinzufügen</span>
             </button>
           </div>
 
           {form.scenes.length === 0 ? (
-            <div className="text-center py-8 px-4 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 space-y-2">
-              <Clapperboard className="w-8 h-8 text-slate-300 mx-auto" />
-              <p className="text-xs text-slate-600 font-medium">
+            <div className="text-center py-8 px-4 rounded-2xl border-2 border-dashed border-zinc-800 bg-zinc-900/50 space-y-2">
+              <Clapperboard className="w-8 h-8 text-zinc-700 mx-auto" />
+              <p className="text-xs text-zinc-500 font-medium">
                 Aktuell wird deine Hauptidee als zusammenhängendes Video gerendert.
               </p>
-              <p className="text-[11px] text-slate-400 max-w-sm mx-auto">
+              <p className="text-[11px] text-zinc-600 max-w-sm mx-auto">
                 Möchtest du eine exakte Reihenfolge vorgeben (z. B. Start, Verfolgungsjagd, Zieldurchfahrt)? Füge einzelne Szenen hinzu.
               </p>
             </div>
@@ -876,10 +876,10 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
               {form.scenes.map((scene, index) => (
                 <div
                   key={scene.id}
-                  className="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-2"
+                  className="p-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 space-y-2"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-800 flex items-center gap-2">
+                    <span className="text-xs font-bold text-zinc-300 flex items-center gap-2">
                       <span className="w-5 h-5 rounded-md bg-rose-600 text-white text-[10px] flex items-center justify-center font-bold">
                         {index + 1}
                       </span>
@@ -888,7 +888,7 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                     <button
                       type="button"
                       onClick={() => handleRemoveScene(scene.id)}
-                      className="text-slate-400 hover:text-rose-600 transition-colors p-1 cursor-pointer"
+                      className="text-zinc-600 hover:text-rose-500 transition-colors p-1 cursor-pointer"
                       title="Szene löschen"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -902,7 +902,7 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                         placeholder="Was passiert in dieser Szene? (z. B. Erdbeere betritt den Supermarkt und schaut sich um)"
                         value={scene.description}
                         onChange={(e) => handleUpdateScene(scene.id, 'description', e.target.value)}
-                        className="w-full bg-white rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-rose-500"
+                        className="w-full bg-zinc-950 rounded-xl border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500"
                       />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -911,14 +911,14 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                         placeholder="Optionale Aktion / Kamerabewegung (z. B. Schneller Schwenk nach rechts)"
                         value={scene.action || ''}
                         onChange={(e) => handleUpdateScene(scene.id, 'action', e.target.value)}
-                        className="w-full bg-white rounded-xl border border-slate-200 px-3 py-1.5 text-[11px] text-slate-700 focus:outline-none focus:border-rose-500"
+                        className="w-full bg-zinc-950 rounded-xl border border-zinc-800 px-3 py-1.5 text-[11px] text-zinc-300 focus:outline-none focus:border-rose-500"
                       />
                       <input
                         type="text"
                         placeholder='Gesprochener Dialog (z. B. "Jetzt geht es los!")'
                         value={scene.dialogue || ''}
                         onChange={(e) => handleUpdateScene(scene.id, 'dialogue', e.target.value)}
-                        className="w-full bg-white rounded-xl border border-slate-200 px-3 py-1.5 text-[11px] text-slate-700 focus:outline-none focus:border-rose-500"
+                        className="w-full bg-zinc-950 rounded-xl border border-zinc-800 px-3 py-1.5 text-[11px] text-zinc-300 focus:outline-none focus:border-rose-500"
                       />
                     </div>
                   </div>
@@ -927,10 +927,10 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
             </div>
           )}
 
-          <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+          <div className="flex items-center justify-between pt-4 border-t border-zinc-900">
             <button
               onClick={() => setStep(3)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 font-semibold text-xs transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-zinc-500 hover:text-white font-semibold text-xs transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Zurück</span>
@@ -948,11 +948,11 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
 
       {/* STEP 5: STYLE, CAMERA, AUDIO & TECHNICAL SPECS */}
       {step === 5 && (
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-8 shadow-sm">
+        <div className="bg-zinc-950 rounded-3xl border border-zinc-800 p-6 sm:p-8 space-y-8 shadow-sm">
           {/* Visual Style Selection */}
           <div className="space-y-3">
-            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Palette className="w-5 h-5 text-rose-600" />
+            <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <Palette className="w-5 h-5 text-rose-500" />
               Visueller Stil
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
@@ -965,15 +965,15 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                     onClick={() => setForm((prev) => ({ ...prev, style: opt.id }))}
                     className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                       isSelected
-                        ? 'border-rose-600 bg-rose-50/50 ring-1 ring-rose-600'
-                        : 'border-slate-200 bg-white hover:border-slate-300'
+                        ? 'border-rose-600 bg-rose-950/30 ring-1 ring-rose-600'
+                        : 'border-zinc-800 bg-zinc-900 hover:border-zinc-700'
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <span className="text-base">{opt.icon}</span>
-                      <span className="font-bold text-xs text-slate-900">{opt.label}</span>
+                      <span className="font-bold text-xs text-white">{opt.label}</span>
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-snug">
+                    <p className="text-[11px] text-zinc-500 mt-1 line-clamp-2 leading-snug">
                       {opt.desc}
                     </p>
                   </button>
@@ -989,15 +989,15 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, customStyleInstructions: e.target.value }))
                 }
-                className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-rose-500"
+                className="w-full bg-zinc-900 rounded-xl border border-zinc-800 px-3.5 py-2 text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:border-rose-500"
               />
             </div>
           </div>
 
           {/* Camera Settings */}
-          <div className="space-y-3 pt-4 border-t border-slate-100">
-            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Video className="w-5 h-5 text-rose-600" />
+          <div className="space-y-3 pt-4 border-t border-zinc-900">
+            <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <Video className="w-5 h-5 text-rose-500" />
               Kameraführung
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -1010,12 +1010,12 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                     onClick={() => setForm((prev) => ({ ...prev, camera: cam.id }))}
                     className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                       isSelected
-                        ? 'border-rose-600 bg-rose-50/50 font-bold text-rose-900'
-                        : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
+                        ? 'border-rose-600 bg-rose-950/30 font-bold text-rose-300'
+                        : 'border-zinc-800 bg-zinc-900 hover:border-zinc-700 text-zinc-400 hover:text-zinc-300'
                     }`}
                   >
                     <div className="text-xs">{cam.label}</div>
-                    <div className="text-[10px] text-slate-500 truncate mt-0.5">{cam.desc}</div>
+                    <div className="text-[10px] text-zinc-500 truncate mt-0.5">{cam.desc}</div>
                   </button>
                 );
               })}
@@ -1023,13 +1023,13 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
           </div>
 
           {/* Audio & Sound Design */}
-          <div className="space-y-3 pt-4 border-t border-slate-100">
+          <div className="space-y-3 pt-4 border-t border-zinc-900">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <h2 className="text-base font-bold text-white flex items-center gap-2">
                 <Volume2 className="w-5 h-5 text-rose-600" />
                 Audio & Sounddesign (Veo-kompatibel)
               </h2>
-              <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
+              <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-zinc-400 hover:text-zinc-300">
                 <input
                   type="checkbox"
                   checked={form.audio.enableAudio}
@@ -1046,9 +1046,9 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
             </div>
 
             {form.audio.enableAudio && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-2xl bg-zinc-900 border border-zinc-800 text-xs">
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                  <label className="block text-[11px] font-semibold text-zinc-500 mb-1">
                     Gesprochener Dialog / Voiceover
                   </label>
                   <input
@@ -1061,12 +1061,12 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                         audio: { ...prev.audio, dialogue: e.target.value },
                       }))
                     }
-                    className="w-full bg-white rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-rose-500"
+                    className="w-full bg-zinc-950 rounded-xl border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                  <label className="block text-[11px] font-semibold text-zinc-500 mb-1">
                     Sound-Effekte (SFX)
                   </label>
                   <input
@@ -1079,12 +1079,12 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                         audio: { ...prev.audio, soundEffects: e.target.value },
                       }))
                     }
-                    className="w-full bg-white rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-rose-500"
+                    className="w-full bg-zinc-950 rounded-xl border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                  <label className="block text-[11px] font-semibold text-zinc-500 mb-1">
                     Umgebungsgeräusche / Atmosphäre
                   </label>
                   <input
@@ -1097,12 +1097,12 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                         audio: { ...prev.audio, ambientSound: e.target.value },
                       }))
                     }
-                    className="w-full bg-white rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-rose-500"
+                    className="w-full bg-zinc-950 rounded-xl border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                  <label className="block text-[11px] font-semibold text-zinc-500 mb-1">
                     Musikstil & Mood
                   </label>
                   <input
@@ -1115,7 +1115,7 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                         audio: { ...prev.audio, musicMood: e.target.value },
                       }))
                     }
-                    className="w-full bg-white rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-rose-500"
+                    className="w-full bg-zinc-950 rounded-xl border border-zinc-800 px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500"
                   />
                 </div>
               </div>
@@ -1123,8 +1123,8 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
           </div>
 
           {/* Technical Video Settings */}
-          <div className="space-y-4 pt-4 border-t border-slate-100">
-            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+          <div className="space-y-4 pt-4 border-t border-zinc-900">
+            <h2 className="text-base font-bold text-white flex items-center gap-2">
               <Sliders className="w-5 h-5 text-rose-600" />
               Technische Video-Einstellungen
             </h2>
@@ -1132,7 +1132,7 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* Aspect Ratio */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold text-zinc-400 mb-1.5">
                   Format / Aspect Ratio
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -1147,7 +1147,7 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                     className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                       form.settings.aspectRatio === '9:16'
                         ? 'border-rose-600 bg-rose-50/50 text-rose-700'
-                        : 'border-slate-200 bg-white text-slate-700'
+                        : 'border-zinc-800 bg-zinc-900 text-zinc-300'
                     }`}
                   >
                     9:16 (Vertikal)
@@ -1163,7 +1163,7 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                     className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                       form.settings.aspectRatio === '16:9'
                         ? 'border-rose-600 bg-rose-50/50 text-rose-700'
-                        : 'border-slate-200 bg-white text-slate-700'
+                        : 'border-zinc-800 bg-zinc-900 text-zinc-300'
                     }`}
                   >
                     16:9 (Horizontal)
@@ -1174,8 +1174,8 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
               {/* Duration */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-semibold text-slate-700">Dauer</label>
-                  <span className="font-mono text-xs font-bold text-slate-900">
+                  <label className="text-xs font-semibold text-zinc-400">Dauer</label>
+                  <span className="font-mono text-xs font-bold text-white">
                     {form.settings.durationSec}s ({creditCost} Credits)
                   </span>
                 </div>
@@ -1193,7 +1193,7 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                   }
                   className="w-full accent-rose-600 cursor-pointer"
                 />
-                <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+                <div className="flex justify-between text-[10px] text-zinc-500 mt-1">
                   <span>10s (10 Cr)</span>
                   <span>25s (15 Cr)</span>
                   <span>45s (20 Cr)</span>
@@ -1202,7 +1202,7 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
 
               {/* Resolution */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                <label className="block text-xs font-semibold text-zinc-400 mb-1.5">
                   Auflösung
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -1217,7 +1217,7 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                     className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                       form.settings.resolution === '720p'
                         ? 'border-rose-600 bg-rose-50/50 text-rose-700'
-                        : 'border-slate-200 bg-white text-slate-700'
+                        : 'border-zinc-800 bg-zinc-900 text-zinc-300'
                     }`}
                   >
                     720p HD (Schnell)
@@ -1233,7 +1233,7 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                     className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                       form.settings.resolution === '1080p'
                         ? 'border-rose-600 bg-rose-50/50 text-rose-700'
-                        : 'border-slate-200 bg-white text-slate-700'
+                        : 'border-zinc-800 bg-zinc-900 text-zinc-300'
                     }`}
                   >
                     1080p Full HD
@@ -1243,10 +1243,10 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+          <div className="flex items-center justify-between pt-4 border-t border-zinc-800">
             <button
               onClick={() => setStep(4)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 font-semibold text-xs transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-zinc-400 hover:text-white font-semibold text-xs transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Zurück</span>
@@ -1264,76 +1264,76 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
 
       {/* STEP 6: REVIEW & PROMPT PREVIEW */}
       {step === 6 && (
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div className="bg-zinc-950 rounded-3xl border border-zinc-800 p-6 sm:p-8 space-y-6 shadow-sm">
           <div>
-            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
               Review & Video-Vorschau
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            <p className="text-xs sm:text-sm text-zinc-400 mt-1">
               Prüfe deine Konfiguration und den für Google Veo optimierten Prompt, bevor Credits abgebucht werden.
             </p>
           </div>
 
           {/* Video Parameter Summary Card */}
-          <div className="rounded-2xl bg-slate-50 border border-slate-200 p-5 space-y-4">
-            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+          <div className="rounded-2xl bg-black border border-zinc-800 p-5 space-y-4">
+            <h3 className="text-xs font-bold text-white uppercase tracking-wider">
               Zusammenfassung deiner Konfiguration
             </h3>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
               <div>
-                <span className="text-slate-400 block text-[11px]">Format & Dauer</span>
-                <span className="font-semibold text-slate-800">
+                <span className="text-zinc-500 block text-[11px]">Format & Dauer</span>
+                <span className="font-semibold text-zinc-300">
                   {form.settings.aspectRatio} · {form.settings.durationSec}s ({form.settings.resolution})
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[11px]">Stil & Kamera</span>
-                <span className="font-semibold text-slate-800 capitalize">
+                <span className="text-zinc-500 block text-[11px]">Stil & Kamera</span>
+                <span className="font-semibold text-zinc-300 capitalize">
                   {form.style} · {form.camera}
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[11px]">Figuren & Szenen</span>
-                <span className="font-semibold text-slate-800">
+                <span className="text-zinc-500 block text-[11px]">Figuren & Szenen</span>
+                <span className="font-semibold text-zinc-300">
                   {form.characters.length} Figuren · {form.scenes.length || 1} Szenen
                 </span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[11px]">Kosten</span>
-                <span className="font-mono font-bold text-rose-600">{creditCost} Credits</span>
+                <span className="text-zinc-500 block text-[11px]">Kosten</span>
+                <span className="font-mono font-bold text-rose-500">{creditCost} Credits</span>
               </div>
             </div>
 
             {form.environment.location && (
-              <div className="pt-2 border-t border-slate-200/60 text-xs">
-                <span className="text-slate-400 text-[11px]">Schauplatz: </span>
-                <span className="font-medium text-slate-700">{form.environment.location}</span>
+              <div className="pt-2 border-t border-zinc-800/60 text-xs">
+                <span className="text-zinc-500 text-[11px]">Schauplatz: </span>
+                <span className="font-medium text-zinc-400">{form.environment.location}</span>
                 {form.environment.timeOfDay && (
-                  <span className="text-slate-500"> ({form.environment.timeOfDay})</span>
+                  <span className="text-zinc-500"> ({form.environment.timeOfDay})</span>
                 )}
               </div>
             )}
           </div>
 
           {/* Gemini Niche Prompt Director Review Panel */}
-          <div className="rounded-3xl border border-indigo-100 bg-gradient-to-b from-indigo-50/40 via-white to-white p-5 sm:p-6 space-y-5 shadow-xs">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-indigo-100/80">
+          <div className="rounded-3xl border border-indigo-900/50 bg-gradient-to-b from-indigo-950/20 via-black to-black p-5 sm:p-6 space-y-5 shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-800">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-sm">
                   <Bot className="w-5 h-5" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-bold text-slate-900">
+                    <h3 className="text-sm font-bold text-white">
                       Gemini Prompt Director · {currentNiche.name}
                     </h3>
-                    <span className="text-[10px] font-semibold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-semibold bg-indigo-900/50 text-indigo-300 px-2 py-0.5 rounded-full">
                       KI-Regie
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-zinc-500">
                     Spezialisierte Szenenplanung nach den Gestaltungsregeln von {currentNiche.name}.
                   </p>
                 </div>
@@ -1363,8 +1363,8 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
 
             {/* Input change notification */}
             {planNeedsUpdate && promptPlan && (
-              <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900">
-                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+              <div className="flex items-center gap-2 p-3 bg-amber-950/30 border border-amber-900/50 rounded-xl text-xs text-amber-200">
+                <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
                 <span>
                   Deine Videoeinstellungen wurden geändert. Klicke auf <strong>"Planung aktualisieren"</strong>, um den Prompt mit den neuen Werten neu zu generieren.
                 </span>
@@ -1373,15 +1373,15 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
 
             {/* Error state */}
             {optimizationError && (
-              <div className="flex items-center justify-between p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800">
+              <div className="flex items-center justify-between p-3.5 bg-rose-950/30 border border-rose-900/50 rounded-xl text-xs text-rose-300">
                 <div className="flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                  <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
                   <span>{optimizationError}</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => handleOptimizeWithGemini()}
-                  className="font-bold underline text-rose-900 hover:text-rose-950 cursor-pointer"
+                  className="font-bold underline text-rose-400 hover:text-rose-300 cursor-pointer"
                 >
                   Erneut versuchen
                 </button>
@@ -1390,12 +1390,12 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
 
             {/* Loading placeholder */}
             {isOptimizing && !promptPlan && (
-              <div className="py-10 text-center space-y-3 bg-indigo-50/30 rounded-2xl border border-indigo-100">
-                <Loader2 className="w-8 h-8 animate-spin text-indigo-600 mx-auto" />
-                <p className="text-xs font-semibold text-slate-800">
+              <div className="py-10 text-center space-y-3 bg-indigo-950/20 rounded-2xl border border-indigo-900/30">
+                <Loader2 className="w-8 h-8 animate-spin text-indigo-500 mx-auto" />
+                <p className="text-xs font-semibold text-zinc-200">
                   Gemini Prompt Director analysiert deine Idee für {currentNiche.name}...
                 </p>
-                <p className="text-[11px] text-slate-500 max-w-sm mx-auto">
+                <p className="text-[11px] text-zinc-500 max-w-sm mx-auto">
                   Beleuchtung, Kamerabewegung und Konsistenzregeln werden für Google Veo berechnet.
                 </p>
               </div>
@@ -1405,26 +1405,26 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
             {promptPlan && (
               <div className="space-y-4">
                 {/* German Summary Card */}
-                <div className="p-4 bg-gradient-to-r from-indigo-50/80 via-rose-50/30 to-amber-50/30 rounded-2xl border border-indigo-200/70">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-950 uppercase tracking-wider mb-1.5">
-                    <Eye className="w-3.5 h-3.5 text-indigo-600" />
+                <div className="p-4 bg-gradient-to-r from-indigo-950/40 via-zinc-900/40 to-zinc-950/40 rounded-2xl border border-indigo-900/30">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-300 uppercase tracking-wider mb-1.5">
+                    <Eye className="w-3.5 h-3.5 text-indigo-400" />
                     <span>Geplante Szene (Zusammenfassung)</span>
                   </div>
-                  <p className="text-xs sm:text-sm font-medium text-slate-800 leading-relaxed">
+                  <p className="text-xs sm:text-sm font-medium text-zinc-200 leading-relaxed">
                     {promptPlan.summaryGerman}
                   </p>
                 </div>
 
                 {/* Sub-Tabs for Specifications */}
                 <div className="space-y-3">
-                  <div className="flex items-center gap-1.5 overflow-x-auto border-b border-slate-200 pb-2 text-xs">
+                  <div className="flex items-center gap-1.5 overflow-x-auto border-b border-zinc-800 pb-2 text-xs">
                     <button
                       type="button"
                       onClick={() => setActiveSpecTab('overview')}
                       className={`px-3 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${
                         activeSpecTab === 'overview'
-                          ? 'bg-slate-900 text-white shadow-xs'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                          ? 'bg-zinc-800 text-white shadow-xs'
+                          : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900'
                       }`}
                     >
                       Figuren & Schauplatz
@@ -1434,8 +1434,8 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                       onClick={() => setActiveSpecTab('timeline')}
                       className={`px-3 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${
                         activeSpecTab === 'timeline'
-                          ? 'bg-slate-900 text-white shadow-xs'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                          ? 'bg-zinc-800 text-white shadow-xs'
+                          : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900'
                       }`}
                     >
                       Ablauf & Kamera ({promptPlan.structuredSpec.timeline.length})
@@ -1445,8 +1445,8 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                       onClick={() => setActiveSpecTab('audio')}
                       className={`px-3 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${
                         activeSpecTab === 'audio'
-                          ? 'bg-slate-900 text-white shadow-xs'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                          ? 'bg-zinc-800 text-white shadow-xs'
+                          : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900'
                       }`}
                     >
                       Audio & Sounddesign
@@ -1456,8 +1456,8 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                       onClick={() => setActiveSpecTab('avoid')}
                       className={`px-3 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${
                         activeSpecTab === 'avoid'
-                          ? 'bg-slate-900 text-white shadow-xs'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                          ? 'bg-zinc-800 text-white shadow-xs'
+                          : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900'
                       }`}
                     >
                       Qualitätsregeln ({promptPlan.structuredSpec.avoidElements.length})
@@ -1467,32 +1467,32 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                   {/* Tab Panel: Overview */}
                   {activeSpecTab === 'overview' && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/70 space-y-2">
-                        <span className="font-bold text-slate-800 block text-[11px] uppercase tracking-wider">
+                      <div className="p-3 bg-zinc-900/50 rounded-xl border border-zinc-800 space-y-2">
+                        <span className="font-bold text-zinc-300 block text-[11px] uppercase tracking-wider">
                           Hauptfiguren & Aussehen
                         </span>
                         <div className="space-y-1.5">
                           {promptPlan.structuredSpec.mainCharacters.map((c, idx) => (
-                            <div key={idx} className="bg-white p-2 rounded-lg border border-slate-200/80">
-                              <span className="font-semibold text-indigo-700">{c.name}</span>
+                            <div key={idx} className="bg-zinc-900 p-2 rounded-lg border border-zinc-800">
+                              <span className="font-semibold text-indigo-400">{c.name}</span>
                               {c.personalityOrRole && (
-                                <span className="text-slate-400 text-[10px] ml-1">({c.personalityOrRole})</span>
+                                <span className="text-zinc-500 text-[10px] ml-1">({c.personalityOrRole})</span>
                               )}
-                              <p className="text-[11px] text-slate-600 mt-0.5">{c.appearance}</p>
+                              <p className="text-[11px] text-zinc-400 mt-0.5">{c.appearance}</p>
                             </div>
                           ))}
                         </div>
                       </div>
 
-                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/70 space-y-2">
-                        <span className="font-bold text-slate-800 block text-[11px] uppercase tracking-wider">
+                      <div className="p-3 bg-zinc-900/50 rounded-xl border border-zinc-800 space-y-2">
+                        <span className="font-bold text-zinc-300 block text-[11px] uppercase tracking-wider">
                           Schauplatz, Licht & Optik
                         </span>
                         <div className="space-y-1 text-[11px]">
-                          <p><strong className="text-slate-700">Setting:</strong> {promptPlan.structuredSpec.environment.setting}</p>
-                          <p><strong className="text-slate-700">Tageszeit:</strong> {promptPlan.structuredSpec.environment.timeOfDay}</p>
-                          <p><strong className="text-slate-700">Licht:</strong> {promptPlan.structuredSpec.environment.lightingAndAtmosphere}</p>
-                          <p><strong className="text-slate-700">Stil:</strong> {promptPlan.structuredSpec.visualStyle}</p>
+                          <p><strong className="text-zinc-400">Setting:</strong> {promptPlan.structuredSpec.environment.setting}</p>
+                          <p><strong className="text-zinc-400">Tageszeit:</strong> {promptPlan.structuredSpec.environment.timeOfDay}</p>
+                          <p><strong className="text-zinc-400">Licht:</strong> {promptPlan.structuredSpec.environment.lightingAndAtmosphere}</p>
+                          <p><strong className="text-zinc-400">Stil:</strong> {promptPlan.structuredSpec.visualStyle}</p>
                         </div>
                       </div>
                     </div>
@@ -1502,17 +1502,17 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                   {activeSpecTab === 'timeline' && (
                     <div className="space-y-2 text-xs">
                       {promptPlan.structuredSpec.timeline.map((item, idx) => (
-                        <div key={idx} className="p-3 bg-slate-50 rounded-xl border border-slate-200/70 flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                        <div key={idx} className="p-3 bg-zinc-900/50 rounded-xl border border-zinc-800 flex flex-col sm:flex-row sm:items-start justify-between gap-2">
                           <div className="space-y-1">
-                            <span className="inline-block px-2 py-0.5 rounded bg-slate-200 font-mono font-bold text-[10px] text-slate-700">
+                            <span className="inline-block px-2 py-0.5 rounded bg-zinc-800 font-mono font-bold text-[10px] text-zinc-400">
                               {item.timestampSec}
                             </span>
-                            <p className="font-medium text-slate-800">{item.visual}</p>
+                            <p className="font-medium text-zinc-200">{item.visual}</p>
                             {item.audioOrSfx && (
-                              <p className="text-[11px] text-indigo-600">Audio: {item.audioOrSfx}</p>
+                              <p className="text-[11px] text-indigo-400">Audio: {item.audioOrSfx}</p>
                             )}
                           </div>
-                          <span className="text-[11px] text-slate-500 bg-white px-2 py-1 rounded-md border border-slate-200/80 shrink-0">
+                          <span className="text-[11px] text-zinc-500 bg-zinc-900 px-2 py-1 rounded-md border border-zinc-800 shrink-0">
                             🎥 {item.cameraMovement}
                           </span>
                         </div>
@@ -1522,21 +1522,21 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
 
                   {/* Tab Panel: Audio */}
                   {activeSpecTab === 'audio' && (
-                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/70 space-y-2 text-xs">
-                      <p><strong className="text-slate-700">Raum-Atmosphäre:</strong> {promptPlan.structuredSpec.audioAndSoundEffects.ambient}</p>
+                    <div className="p-3 bg-zinc-900/50 rounded-xl border border-zinc-800 space-y-2 text-xs">
+                      <p><strong className="text-zinc-400">Raum-Atmosphäre:</strong> {promptPlan.structuredSpec.audioAndSoundEffects.ambient}</p>
                       <div>
-                        <strong className="text-slate-700 block mb-1">Soundeffekte (SFX):</strong>
+                        <strong className="text-zinc-400 block mb-1">Soundeffekte (SFX):</strong>
                         <div className="flex flex-wrap gap-1.5">
                           {promptPlan.structuredSpec.audioAndSoundEffects.sfx.map((sfx, idx) => (
-                            <span key={idx} className="px-2 py-0.5 rounded-full bg-white border border-slate-200 text-[11px] text-slate-700">
+                            <span key={idx} className="px-2 py-0.5 rounded-full bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300">
                               🔊 {sfx}
                             </span>
                           ))}
                         </div>
                       </div>
                       {promptPlan.structuredSpec.audioAndSoundEffects.dialogueOrVoiceover && (
-                        <p className="pt-1 border-t border-slate-200/60">
-                          <strong className="text-slate-700">Dialog:</strong> "{promptPlan.structuredSpec.audioAndSoundEffects.dialogueOrVoiceover}"
+                        <p className="pt-1 border-t border-zinc-800/60">
+                          <strong className="text-zinc-400">Dialog:</strong> "{promptPlan.structuredSpec.audioAndSoundEffects.dialogueOrVoiceover}"
                         </p>
                       )}
                     </div>
@@ -1544,13 +1544,13 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
 
                   {/* Tab Panel: Avoid / Quality */}
                   {activeSpecTab === 'avoid' && (
-                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/70 space-y-2 text-xs">
-                      <span className="font-bold text-slate-800 block text-[11px] uppercase tracking-wider">
+                    <div className="p-3 bg-zinc-900/50 rounded-xl border border-zinc-800 space-y-2 text-xs">
+                      <span className="font-bold text-zinc-300 block text-[11px] uppercase tracking-wider">
                         Unerwünschte Elemente (Negative Constraints)
                       </span>
                       <div className="flex flex-wrap gap-1.5">
                         {promptPlan.structuredSpec.avoidElements.map((item, idx) => (
-                          <span key={idx} className="px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-[11px] font-medium text-rose-700">
+                          <span key={idx} className="px-2.5 py-1 rounded-lg bg-rose-950/30 border border-rose-900/50 text-[11px] font-medium text-rose-300">
                             ✕ {item}
                           </span>
                         ))}
@@ -1563,14 +1563,14 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
           </div>
 
           {/* Generated Veo Prompt Card */}
-          <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-2xs">
-            <div className="flex items-center justify-between px-4 py-3 bg-slate-100/70 border-b border-slate-200">
+          <div className="rounded-2xl border border-zinc-800 bg-black overflow-hidden shadow-2xs">
+            <div className="flex items-center justify-between px-4 py-3 bg-zinc-900 border-b border-zinc-800">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-rose-600" />
-                <span className="text-xs font-bold text-slate-900">
+                <Sparkles className="w-4 h-4 text-rose-500" />
+                <span className="text-xs font-bold text-white">
                   Strukturierter Veo 3.1 Prompt
                 </span>
-                <span className="text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full font-mono">
+                <span className="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded-full font-mono">
                   {activePrompt.length} / 2000 Zeichen
                 </span>
               </div>
@@ -1581,8 +1581,8 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                   onClick={() => setIsEditingPrompt(!isEditingPrompt)}
                   className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                     isEditingPrompt
-                      ? 'bg-rose-100 text-rose-700'
-                      : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+                      ? 'bg-rose-950 text-rose-400'
+                      : 'bg-zinc-800 border border-zinc-700 text-zinc-300 hover:bg-zinc-700'
                   }`}
                 >
                   <Edit3 className="w-3.5 h-3.5" />
@@ -1592,16 +1592,16 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                 <button
                   type="button"
                   onClick={handleCopyPrompt}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-300 hover:bg-zinc-700 text-xs font-semibold transition-colors cursor-pointer"
                 >
                   {copied ? (
                     <>
-                      <Check className="w-3.5 h-3.5 text-emerald-600" />
-                      <span className="text-emerald-700">Kopiert!</span>
+                      <Check className="w-3.5 h-3.5 text-emerald-500" />
+                      <span className="text-emerald-400">Kopiert!</span>
                     </>
                   ) : (
                     <>
-                      <Copy className="w-3.5 h-3.5 text-slate-500" />
+                      <Copy className="w-3.5 h-3.5 text-zinc-500" />
                       <span>Kopieren</span>
                     </>
                   )}
@@ -1615,10 +1615,10 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
                   rows={8}
                   value={manualPromptOverride || engineResult.prompt}
                   onChange={(e) => setManualPromptOverride(e.target.value)}
-                  className="w-full font-mono text-xs text-slate-900 bg-slate-50 rounded-xl border border-slate-200 p-3 focus:outline-none focus:border-rose-500"
+                  className="w-full font-mono text-xs text-white bg-zinc-900 rounded-xl border border-zinc-800 p-3 focus:outline-none focus:border-rose-500"
                 />
               ) : (
-                <pre className="font-mono text-xs text-slate-800 whitespace-pre-wrap bg-slate-50/60 p-4 rounded-xl border border-slate-100 max-h-72 overflow-y-auto leading-relaxed">
+                <pre className="font-mono text-xs text-zinc-300 whitespace-pre-wrap bg-zinc-900/60 p-4 rounded-xl border border-zinc-800 max-h-72 overflow-y-auto leading-relaxed">
                   {engineResult.prompt}
                 </pre>
               )}
@@ -1627,9 +1627,9 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
 
           {/* Insufficient Credits Warning if applicable */}
           {isLoggedIn && userCredits < creditCost && (
-            <div className="flex items-center justify-between p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
+            <div className="flex items-center justify-between p-4 rounded-2xl bg-amber-950/20 border border-amber-900/30 text-xs text-amber-200">
               <div className="flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
                 <span>
                   Dein Guthaben ({userCredits} Credits) reicht nicht für diese Generierung ({creditCost} Credits).
                 </span>
@@ -1637,7 +1637,7 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
               <button
                 type="button"
                 onClick={onOpenCreditsModal}
-                className="font-bold underline text-amber-800 hover:text-amber-950 cursor-pointer"
+                className="font-bold underline text-amber-400 hover:text-amber-300 cursor-pointer"
               >
                 Credits aufladen
               </button>
@@ -1645,10 +1645,10 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
           )}
 
           {/* Action Footer */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-zinc-900">
             <button
               onClick={() => setStep(5)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 font-semibold text-xs transition-colors cursor-pointer order-2 sm:order-1"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-zinc-400 hover:text-white font-semibold text-xs transition-colors cursor-pointer order-2 sm:order-1"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Zurück zur Bearbeitung</span>
@@ -1667,11 +1667,11 @@ export const CreateVideoWorkflow: React.FC<CreateVideoWorkflowProps> = ({
 
       {/* Niche Switcher Modal */}
       {isNicheModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-zinc-950 rounded-3xl p-6 sm:p-8 shadow-2xl border border-zinc-800">
             <button
               onClick={() => setIsNicheModalOpen(false)}
-              className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+              className="absolute top-5 right-5 p-2 rounded-xl text-zinc-500 hover:text-white hover:bg-zinc-900 transition-colors cursor-pointer"
               aria-label="Schließen"
             >
               <X className="w-5 h-5" />
