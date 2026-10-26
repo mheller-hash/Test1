@@ -30,7 +30,7 @@ export interface VideoTemplate {
   category: TemplateCategory;
   badge?: 'Trending' | 'New' | 'Popular' | 'Viral';
   thumbnailUrl: string;
-  aspectRatio: '9:16';
+  aspectRatio: '9:16' | '16:9';
   defaultDurationSec: number;
   creditCost: number;
   presetScenarios: {
@@ -67,15 +67,23 @@ export interface GeneratedVideo {
   title: string;
   templateId: string;
   templateName: string;
+  nicheId?: string;
   thumbnailUrl: string;
   videoUrl?: string;
+  storageUrl?: string;
+  storagePath?: string;
+  storageBucket?: string;
+  storageStatus?: 'completed' | 'uploading' | 'failed' | 'not_archived';
+  storageError?: string;
+  fileSizeBytes?: number;
+  mimeType?: string;
   modelUsed?: string;
   durationSec: number;
   createdAt: string;
   status: 'completed' | 'generating' | 'failed';
   creditUsed: number;
-  scenes: SceneData[];
-  settings: Record<string, any>;
+  scenes?: SceneData[];
+  settings?: Record<string, any>;
   aspectRatio: '9:16' | '16:9';
 }
 
@@ -85,5 +93,10 @@ export interface UserProfile {
   credits: number;
   plan: 'free' | 'creator' | 'pro';
   videosCreatedCount: number;
+  totalCreditsUsed?: number;
   estimatedViews: number;
+  isAdmin?: boolean;
 }
+
+export * from './workflow';
+export * from './niche';

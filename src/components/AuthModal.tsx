@@ -6,6 +6,7 @@ import {
   signInWithPopup,
   AuthError,
   sendEmailVerification,
+  sendPasswordResetEmail,
   signOut,
 } from 'firebase/auth';
 import { auth } from '../firebase';
@@ -31,7 +32,7 @@ interface AuthModalProps {
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => {
-  const [mode, setMode] = useState<'signin' | 'signup' | 'verification'>('signin');
+  const [mode, setMode] = useState<'signin' | 'signup' | 'verification' | 'forgot'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -100,6 +101,34 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
     }
   };
 
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) {
+      setErrorMessage('Bitte gib deine E-Mail-Adresse ein, um dein Passwort zurückzusetzen.');
+      return;
+    }
+
+    setLoading(true);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    try {
+      await sendPasswordResetEmail(auth, email.trim());
+      setSuccessMessage('Eine E-Mail zum Zurücksetzen des Passworts wurde gesendet!');
+      setMode('signin');
+    } catch (err: any) {
+      if (err.code === 'auth/user-not-found') {
+        setErrorMessage('Kein Benutzer mit dieser E-Mail-Adresse gefunden.');
+      } else if (err.code === 'auth/invalid-email') {
+        setErrorMessage('Bitte eine gültige E-Mail-Adresse eingeben.');
+      } else {
+        setErrorMessage('Fehler beim Senden der Reset-E-Mail. Bitte versuche es später erneut.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleGoogleSignIn = async () => {
     setErrorMessage(null);
     setSuccessMessage(null);
@@ -155,12 +184,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
               <span className="text-rose-600">.ai</span>
             </div>
             <div className="text-[11px] text-slate-500 font-medium">
-              {mode === 'signin' ? 'Willkommen zurück' : mode === 'signup' ? 'Erstelle deinen kostenlosen Account' : 'E-Mail Bestätigung'}
+              {mode === 'signin' ? 'Willkommen zurück' : mode === 'signup' ? 'Erstelle deinen kostenlosen Account' : mode === 'forgot' ? 'Passwort zurücksetzen' : 'E-Mail Bestätigung'}
             </div>
           </div>
         </div>
 
-        {mode !== 'verification' && (
+        {mode !== 'verification' && mode !== 'forgot' && (
           <div className="p-1 bg-slate-100 rounded-2xl border border-slate-200 grid grid-cols-2 gap-1 mb-6">
             <button
               type="button"
@@ -273,82 +302,142 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-slate-700">
-                  E-Mail Adresse
-                </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="deine.email@beispiel.de"
-                    className="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 hover:border-slate-300 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/30 transition-all shadow-xs"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
+            {mode !== 'forgot' ? (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-1.5">
                   <label className="block text-xs font-semibold text-slate-700">
-                    Passwort
+                    E-Mail Adresse
                   </label>
-                  {mode === 'signup' && (
-                    <span className="text-[10px] text-slate-500 font-mono">Min. 6 Zeichen</span>
-                  )}
+                  <div className="relative">
+                    <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="deine.email@beispiel.de"
+                      className="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 hover:border-slate-300 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/30 transition-all shadow-xs"
+                    />
+                  </div>
                 </div>
-                
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••••••"
-                    className="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 hover:border-slate-300 rounded-xl pl-10 pr-10 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/30 transition-all font-mono shadow-xs"
-                  />
 
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
-                    title={showPassword ? 'Passwort verbergen' : 'Passwort anzeigen'}
-                    tabIndex={-1}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-4 h-4 text-rose-600" />
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      Passwort
+                    </label>
+                    {mode === 'signup' ? (
+                      <span className="text-[10px] text-slate-500 font-mono">Min. 6 Zeichen</span>
                     ) : (
-                      <Eye className="w-4 h-4 text-slate-400 hover:text-slate-600" />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMode('forgot');
+                          setErrorMessage(null);
+                          setSuccessMessage(null);
+                        }}
+                        className="text-[10px] text-rose-600 hover:text-rose-500 font-bold transition-colors cursor-pointer"
+                      >
+                        Passwort vergessen?
+                      </button>
                     )}
-                  </button>
-                </div>
-              </div>
+                  </div>
+                  
+                  <div className="relative">
+                    <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••••••"
+                      className="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 hover:border-slate-300 rounded-xl pl-10 pr-10 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/30 transition-all font-mono shadow-xs"
+                    />
 
-              <button
-                type="submit"
-                disabled={loading || googleLoading}
-                className="w-full py-3 px-4 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-semibold rounded-xl text-xs transition-all shadow-md shadow-rose-500/25 flex items-center justify-center gap-2 mt-4 cursor-pointer disabled:opacity-50"
-              >
-                {loading ? (
-                  <Loader2 className="w-4 h-4 animate-spin text-white" />
-                ) : mode === 'signin' ? (
-                  <>
-                    <span>Jetzt anmelden</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </>
-                ) : (
-                  <>
-                    <span>Kostenlos registrieren</span>
-                    <Sparkles className="w-3.5 h-3.5" />
-                  </>
-                )}
-              </button>
-            </form>
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                      title={showPassword ? 'Passwort verbergen' : 'Passwort anzeigen'}
+                      tabIndex={-1}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4 text-rose-600" />
+                      ) : (
+                        <Eye className="w-4 h-4 text-slate-400 hover:text-slate-600" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading || googleLoading}
+                  className="w-full py-3 px-4 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-semibold rounded-xl text-xs transition-all shadow-md shadow-rose-500/25 flex items-center justify-center gap-2 mt-4 cursor-pointer disabled:opacity-50"
+                >
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-white" />
+                  ) : mode === 'signin' ? (
+                    <>
+                      <span>Jetzt anmelden</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </>
+                  ) : (
+                    <>
+                      <span>Kostenlos registrieren</span>
+                      <Sparkles className="w-3.5 h-3.5" />
+                    </>
+                  )}
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleResetPassword} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-700">
+                    E-Mail Adresse
+                  </label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="deine.email@beispiel.de"
+                      className="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 hover:border-slate-300 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/30 transition-all shadow-xs"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3 px-4 bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 text-white font-semibold rounded-xl text-xs transition-all shadow-md shadow-rose-500/25 flex items-center justify-center gap-2 mt-4 cursor-pointer disabled:opacity-50"
+                >
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 animate-spin text-white" />
+                  ) : (
+                    <>
+                      <span>Reset-Link senden</span>
+                      <Mail className="w-3.5 h-3.5" />
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode('signin');
+                    setErrorMessage(null);
+                    setSuccessMessage(null);
+                  }}
+                  className="w-full py-2.5 px-4 rounded-xl text-slate-600 hover:text-slate-900 font-semibold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <ArrowRight className="w-3.5 h-3.5 rotate-180" />
+                  <span>Zurück zur Anmeldung</span>
+                </button>
+              </form>
+            )}
 
             <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
               <div className="flex items-center gap-1.5 text-slate-600">

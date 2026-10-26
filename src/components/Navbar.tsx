@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Sparkles, Coins, Film, LogIn, LogOut, User as UserIcon, ShieldCheck } from 'lucide-react';
+import { Sparkles, Coins, Film, LogIn, LogOut, User as UserIcon, ShieldCheck, Layers, Shield } from 'lucide-react';
 import { UserProfile } from '../types';
 import { User } from 'firebase/auth';
 
 interface NavbarProps {
-  currentTab: 'landing' | 'discover' | 'dashboard' | 'my-videos' | 'pricing' | 'detail';
-  setCurrentTab: (tab: 'landing' | 'discover' | 'dashboard' | 'my-videos' | 'pricing' | 'detail') => void;
+  currentTab: 'landing' | 'niches' | 'discover' | 'create' | 'dashboard' | 'my-videos' | 'pricing' | 'detail' | 'admin';
+  setCurrentTab: (tab: 'landing' | 'niches' | 'discover' | 'create' | 'dashboard' | 'my-videos' | 'pricing' | 'detail' | 'admin') => void;
   user: UserProfile;
   authUser: User | null;
   onOpenCreditsModal: () => void;
@@ -38,6 +38,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const displayInitial = authUser?.email
     ? authUser.email.charAt(0).toUpperCase()
     : user.name.charAt(0).toUpperCase();
+
   return (
     <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 py-3.5 shadow-xs">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-8">
@@ -58,6 +59,30 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Zone 2: 4-5 concise single-line nav links with hover underlines */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
           <button
+            onClick={() => setCurrentTab('create')}
+            className={`whitespace-nowrap shrink-0 pb-0.5 transition-colors cursor-pointer flex items-center gap-1.5 ${
+              currentTab === 'create'
+                ? 'text-slate-900 border-b-2 border-rose-600 font-semibold'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-rose-600" />
+            <span>Create Video</span>
+          </button>
+
+          <button
+            onClick={() => setCurrentTab('niches')}
+            className={`whitespace-nowrap shrink-0 pb-0.5 transition-colors cursor-pointer flex items-center gap-1.5 ${
+              currentTab === 'niches'
+                ? 'text-slate-900 border-b-2 border-rose-600 font-semibold'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5 text-rose-500" />
+            <span>Video-Nischen</span>
+          </button>
+
+          <button
             onClick={() => setCurrentTab('discover')}
             className={`whitespace-nowrap shrink-0 pb-0.5 transition-colors cursor-pointer ${
               currentTab === 'discover' || currentTab === 'detail'
@@ -65,30 +90,48 @@ export const Navbar: React.FC<NavbarProps> = ({
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Discover
+            Templates
           </button>
           
-          <button
-            onClick={() => setCurrentTab('dashboard')}
-            className={`whitespace-nowrap shrink-0 pb-0.5 transition-colors cursor-pointer ${
-              currentTab === 'dashboard'
-                ? 'text-slate-900 border-b-2 border-rose-600 font-semibold'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            Dashboard
-          </button>
+          {authUser && (
+            <>
+              <button
+                onClick={() => setCurrentTab('dashboard')}
+                className={`whitespace-nowrap shrink-0 pb-0.5 transition-colors cursor-pointer ${
+                  currentTab === 'dashboard'
+                    ? 'text-slate-900 border-b-2 border-rose-600 font-semibold'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Dashboard
+              </button>
 
-          <button
-            onClick={() => setCurrentTab('my-videos')}
-            className={`whitespace-nowrap shrink-0 pb-0.5 transition-colors flex items-center gap-1.5 cursor-pointer ${
-              currentTab === 'my-videos'
-                ? 'text-slate-900 border-b-2 border-rose-600 font-semibold'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <span>My Videos</span>
-          </button>
+              <button
+                onClick={() => setCurrentTab('my-videos')}
+                className={`whitespace-nowrap shrink-0 pb-0.5 transition-colors flex items-center gap-1.5 cursor-pointer ${
+                  currentTab === 'my-videos'
+                    ? 'text-slate-900 border-b-2 border-rose-600 font-semibold'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <span>My Videos</span>
+              </button>
+
+              {user.isAdmin && (
+                <button
+                  onClick={() => setCurrentTab('admin')}
+                  className={`whitespace-nowrap shrink-0 pb-0.5 transition-colors flex items-center gap-1.5 cursor-pointer font-bold ${
+                    currentTab === 'admin'
+                      ? 'text-purple-600 border-b-2 border-purple-600'
+                      : 'text-purple-600/80 hover:text-purple-700'
+                  }`}
+                >
+                  <Shield className="w-3.5 h-3.5 text-purple-600" />
+                  <span className="bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full text-xs font-semibold">Admin</span>
+                </button>
+              )}
+            </>
+          )}
 
           <button
             onClick={() => setCurrentTab('pricing')}
@@ -107,7 +150,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               currentTab === 'landing' ? 'text-slate-900 border-b-2 border-slate-600 font-semibold' : ''
             }`}
           >
-            Landing Page
+            Home
           </button>
         </nav>
 
@@ -130,7 +173,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           <button
-            onClick={() => setCurrentTab('discover')}
+            onClick={() => setCurrentTab('create')}
             className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-500 rounded-lg shadow-sm shadow-rose-500/20 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5" />
@@ -167,6 +210,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </div>
 
                   <div className="p-1 mt-1 space-y-0.5">
+                    {user.isAdmin && (
+                      <button
+                        onClick={() => {
+                          setUserMenuOpen(false);
+                          setCurrentTab('admin');
+                        }}
+                        className="w-full text-left px-2.5 py-1.5 rounded-lg text-purple-700 font-bold hover:bg-purple-50 transition-colors flex items-center justify-between cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Shield className="w-3.5 h-3.5 text-purple-600" />
+                          <span>Admin-Dashboard</span>
+                        </div>
+                        <span className="bg-purple-100 text-purple-800 px-1.5 py-0.2 rounded text-[10px]">VERIFIED</span>
+                      </button>
+                    )}
+
                     <button
                       onClick={() => {
                         setUserMenuOpen(false);
@@ -211,23 +270,34 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile nav bar */}
       <div className="md:hidden flex items-center justify-around pt-2.5 mt-2 border-t border-slate-200 text-xs font-medium text-slate-600">
         <button
+          onClick={() => setCurrentTab('create')}
+          className={`py-1 flex items-center gap-1 ${currentTab === 'create' ? 'text-rose-600 font-bold' : ''}`}
+        >
+          <Sparkles className="w-3 h-3" />
+          <span>Create</span>
+        </button>
+        <button
           onClick={() => setCurrentTab('discover')}
           className={`py-1 ${currentTab === 'discover' ? 'text-rose-600 font-semibold' : ''}`}
         >
-          Discover
+          Templates
         </button>
-        <button
-          onClick={() => setCurrentTab('dashboard')}
-          className={`py-1 ${currentTab === 'dashboard' ? 'text-rose-600 font-semibold' : ''}`}
-        >
-          Dashboard
-        </button>
-        <button
-          onClick={() => setCurrentTab('my-videos')}
-          className={`py-1 ${currentTab === 'my-videos' ? 'text-rose-600 font-semibold' : ''}`}
-        >
-          My Videos
-        </button>
+        {authUser && (
+          <>
+            <button
+              onClick={() => setCurrentTab('dashboard')}
+              className={`py-1 ${currentTab === 'dashboard' ? 'text-rose-600 font-semibold' : ''}`}
+            >
+              Dashboard
+            </button>
+            <button
+              onClick={() => setCurrentTab('my-videos')}
+              className={`py-1 ${currentTab === 'my-videos' ? 'text-rose-600 font-semibold' : ''}`}
+            >
+              My Videos
+            </button>
+          </>
+        )}
         <button
           onClick={() => setCurrentTab('pricing')}
           className={`py-1 ${currentTab === 'pricing' ? 'text-rose-600 font-semibold' : ''}`}

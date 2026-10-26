@@ -2,66 +2,88 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Default Deny
+    // Default Deny Catch-All Security Net
     match /{document=**} {
       allow read, write: if false;
     }
 
-    // Helpers
+    // Helper Functions
     function isSignedIn() { return request.auth != null; }
     function isOwner(uid) { return isSignedIn() && request.auth.uid == uid; }
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.admin == true ||
+        request.auth.uid == 'WNCq0kNNYbeCLNAGS0TXPsMqfP02'
+      );
+    }
 
-    // Operations mapping collection - Managed purely server-side by Admin SDK
+    // Server Operations Collection - Internal only (Managed purely server-side by Admin SDK)
     match /operations/{opId} {
       allow read, write: if false;
     }
 
-    // Users
+    // Users Collection
     match /users/{uid} {
-      // User can read their own profile, credits, and history.
-      allow read: if isOwner(uid);
+      // User can read their own profile, credits, and history. Authorized Admins can read any user.
+      allow read: if isOwner(uid) || isAdmin();
       
-      // User documents and initial credits are created solely by the backend via Firebase Admin SDK.
-      // Normal clients cannot create or delete user profiles directly.
-      allow create, delete: if false;
+      // Allow user to create initial profile doc safely with bounded starter defaults
+      allow create: if isOwner(uid) &&
+        request.resource.data.email == request.auth.token.email &&
+        request.resource.data.credits >= 0 && request.resource.data.credits <= 100 &&
+        (request.resource.data.plan == 'free' || request.resource.data.plan == 'creator' || request.resource.data.plan == 'starter' || request.resource.data.plan == 'pro') &&
+        (!('role' in request.resource.data) || request.resource.data.role == 'creator') &&
+        (!('isAdmin' in request.resource.data) || request.resource.data.isAdmin == false);
+        
+      allow delete: if false;
         
       // If a user updates their own profile, billing, credit, and audit fields are strictly protected.
-      allow update: if isOwner(uid) &&
+      // Admins are allowed to update user fields server-side or directly if authorized.
+      allow update: if (isOwner(uid) &&
         !request.resource.data.diff(resource.data).affectedKeys().hasAny([
           'credits',
           'plan',
           'videosCreatedCount',
           'totalCreditsUsed',
-          'createdAt'
-        ]);
+          'createdAt',
+          'role',
+          'isAdmin',
+          'refunded',
+          'cost',
+          'activeGenerations',
+          'recentGenerationTimestamps',
+          'uid',
+          'id'
+        ])) || isAdmin();
 
-      // Credit Transactions Ledger: Read-only for owner, written solely by Server Admin SDK
+      // Credit Transactions Ledger: Read-only for owner or admin, written solely by Server Admin SDK
       match /creditTransactions/{transactionId} {
-        allow read: if isOwner(uid);
+        allow read: if isOwner(uid) || isAdmin();
         allow write: if false;
       }
 
-      // Server Video Generation Records: Read-only for owner, written solely by Server Admin SDK
+      // Server Video Generation Records: Read-only for owner or admin, written solely by Server Admin SDK
       match /generations/{generationId} {
-        allow read: if isOwner(uid);
+        allow read: if isOwner(uid) || isAdmin();
         allow write: if false;
       }
 
-      // User Resources
+      // User Workflows & Resources
       match /folders/{folderId} {
-        allow read, write: if isOwner(uid);
+        allow read, write: if isOwner(uid) || isAdmin();
       }
       match /files/{fileId} {
-        allow read, write: if isOwner(uid);
+        allow read, write: if isOwner(uid) || isAdmin();
       }
       match /notes/{noteId} {
-        allow read, write: if isOwner(uid);
+        allow read, write: if isOwner(uid) || isAdmin();
       }
       match /teamMembers/{memberId} {
-        allow read, write: if isOwner(uid);
+        allow read, write: if isOwner(uid) || isAdmin();
       }
       match /videos/{videoId} {
-        allow read, write: if isOwner(uid);
+        allow read: if isOwner(uid) || isAdmin();
+        allow write: if isOwner(uid) || isAdmin();
       }
     }
   }

@@ -5,9 +5,10 @@ import { VideoTemplate, TemplateCategory } from '../types';
 
 interface DiscoverProps {
   onSelectTemplate: (template: VideoTemplate) => void;
+  onGoToCreate?: () => void;
 }
 
-export const Discover: React.FC<DiscoverProps> = ({ onSelectTemplate }) => {
+export const Discover: React.FC<DiscoverProps> = ({ onSelectTemplate, onGoToCreate }) => {
   const [selectedCategory, setSelectedCategory] = useState<TemplateCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -53,20 +54,32 @@ export const Discover: React.FC<DiscoverProps> = ({ onSelectTemplate }) => {
             Template Library
           </h1>
           <p className="text-sm text-slate-600 mt-1">
-            Wähle ein virales Format, passe die Szenen an und erstelle dein fertiges Short in Sekunden.
+            Wähle ein virales Format oder erstelle ein komplett eigenes Video mit dem strukturierten Veo Studio.
           </p>
         </div>
 
-        {/* Search bar */}
-        <div className="relative w-full sm:w-72">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            placeholder="Template oder Genre suchen..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/30 transition-all shadow-xs"
-          />
+        {/* Search bar & Create button */}
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          {onGoToCreate && (
+            <button
+              onClick={onGoToCreate}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-semibold text-xs shadow-xs transition-all cursor-pointer whitespace-nowrap shrink-0"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Eigenes Video erstellen</span>
+            </button>
+          )}
+
+          <div className="relative w-full sm:w-64">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Template suchen..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500/30 transition-all shadow-xs"
+            />
+          </div>
         </div>
       </div>
 

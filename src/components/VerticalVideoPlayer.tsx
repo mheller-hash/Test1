@@ -19,6 +19,7 @@ import {
   CheckCircle2,
   AlertCircle,
   FileCode,
+  Film,
 } from 'lucide-react';
 import { GeneratedVideo } from '../types';
 import {
@@ -27,6 +28,8 @@ import {
   generateScriptContent,
   triggerBlobDownload,
 } from '../lib/videoExporter';
+import { authFetch } from '../lib/authFetch';
+import { auth } from '../firebase';
 
 interface VerticalVideoPlayerProps {
   video: GeneratedVideo;
@@ -54,94 +57,100 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [showExportMenu, setShowExportMenu] = useState(false);
 
-  const durationSec = video.durationSec || 30;
+  // Playback URL resolution: handles direct Veo URLs, signed URLs, and authenticated Storage proxy streams
+  const [resolvedVideoUrl, setResolvedVideoUrl] = useState<string | null>(video.videoUrl || null);
+  const [isResolvingUrl, setIsResolvingUrl] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function resolveStoragePlayback() {
+      // If we already have a valid non-empty URL, use it first
+      if (video.videoUrl && !video.videoUrl.startsWith('/api/')) {
+        setResolvedVideoUrl(video.videoUrl);
+        return;
+      }
+      if (!video.id) return;
+
+      setIsResolvingUrl(true);
+      try {
+        const res = await authFetch(`/api/videos/${video.id}/signed-url`, { method: 'POST' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.signedUrl && isMounted) {
+            setResolvedVideoUrl(data.signedUrl);
+          } else if (data.streamUrl && isMounted) {
+            const token = await auth.currentUser?.getIdToken();
+            const tokenParam = token ? `?token=${encodeURIComponent(token)}` : '';
+            setResolvedVideoUrl(`${data.streamUrl}${tokenParam}`);
+          }
+        }
+      } catch (e) {
+        console.warn('Storage playback resolution note:', e);
+      } finally {
+        if (isMounted) setIsResolvingUrl(false);
+      }
+    }
+
+    resolveStoragePlayback();
+    return () => {
+      isMounted = false;
+    };
+  }, [video.id, video.videoUrl]);
+
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [actualDuration, setActualDuration] = useState<number>(video.durationSec || 15);
+  const durationSec = actualDuration || video.durationSec || 15;
   const scenes = video.scenes || [];
 
   // Determine current scene based on currentTimeSec
   const currentSceneIndex = Math.min(
     scenes.length - 1,
-    Math.max(0, Math.floor((currentTimeSec / durationSec) * scenes.length))
+    Math.max(0, Math.floor((currentTimeSec / (durationSec || 1)) * scenes.length))
   );
   const currentScene = scenes[currentSceneIndex] || scenes[0];
 
-  // Web Speech API for authentic voiceover narration
-  const speakCurrentScene = (text: string) => {
-    if (isMuted || !('speechSynthesis' in window)) return;
-    try {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1.05 * playbackSpeed;
-      utterance.pitch = 0.95;
-      window.speechSynthesis.speak(utterance);
-    } catch (e) {
-      // Ignore speech error if not allowed by browser permissions
-    }
-  };
-
-  // Playback timer loop
+  // Control playback on video element
   useEffect(() => {
-    let animationFrameId: number;
-    let lastTimestamp = performance.now();
-
-    const loop = (timestamp: number) => {
+    if (videoRef.current) {
       if (isPlaying) {
-        const deltaSec = ((timestamp - lastTimestamp) / 1000) * playbackSpeed;
-        setCurrentTimeSec((prev) => {
-          const next = prev + deltaSec;
-          if (next >= durationSec) {
-            return 0;
-          }
-          return next;
-        });
-      }
-      lastTimestamp = timestamp;
-      animationFrameId = requestAnimationFrame(loop);
-    };
-
-    animationFrameId = requestAnimationFrame(loop);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [isPlaying, durationSec, playbackSpeed]);
-
-  // Trigger speech on scene change if playing
-  const prevSceneIndexRef = useRef(currentSceneIndex);
-  useEffect(() => {
-    if (isPlaying && !isMuted && currentScene?.spokenText) {
-      if (prevSceneIndexRef.current !== currentSceneIndex) {
-        prevSceneIndexRef.current = currentSceneIndex;
-        speakCurrentScene(currentScene.spokenText);
+        videoRef.current.play().catch(() => {});
+      } else {
+        videoRef.current.pause();
       }
     }
-  }, [currentSceneIndex, isPlaying, isMuted]);
+  }, [isPlaying]);
 
-  // Stop speech synthesis on unmount
   useEffect(() => {
-    return () => {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
-    };
-  }, []);
+    if (videoRef.current) {
+      videoRef.current.muted = isMuted;
+    }
+  }, [isMuted]);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = playbackSpeed;
+    }
+  }, [playbackSpeed]);
 
   const togglePlay = () => {
-    if (!isPlaying) {
-      if (!isMuted && currentScene?.spokenText) {
-        speakCurrentScene(currentScene.spokenText);
+    if (videoRef.current) {
+      if (videoRef.current.paused) {
+        videoRef.current.play().catch(() => {});
+        setIsPlaying(true);
+      } else {
+        videoRef.current.pause();
+        setIsPlaying(false);
       }
-    } else {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
+      return;
     }
     setIsPlaying((prev) => !prev);
   };
 
   const handleSeek = (timeSec: number) => {
-    setCurrentTimeSec(timeSec);
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+    const clamped = Math.max(0, Math.min(durationSec, timeSec));
+    setCurrentTimeSec(clamped);
+    if (videoRef.current) {
+      videoRef.current.currentTime = clamped;
     }
   };
 
@@ -236,132 +245,100 @@ export const VerticalVideoPlayer: React.FC<VerticalVideoPlayerProps> = ({
               isWide ? 'aspect-video w-full max-w-[480px]' : 'aspect-[9/16] w-full max-w-[320px]'
             } rounded-2xl overflow-hidden shadow-2xl bg-slate-900 cursor-pointer select-none group border border-slate-300`}
           >
-            {/* Visual Frame: Real HTML5 Video if available, else Storyboard Animation */}
-            {video.videoUrl ? (
+            {/* Visual Frame: Real HTML5 Video if available, else Clean placeholder */}
+            {isResolvingUrl ? (
+              <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-slate-900 text-slate-300">
+                <Loader2 className="w-8 h-8 text-rose-500 animate-spin mb-2" />
+                <p className="text-xs font-semibold text-slate-200">Lade gesichertes Video...</p>
+                <p className="text-[10px] text-slate-400 mt-1">Sichere Verbindung zu Firebase Storage</p>
+              </div>
+            ) : resolvedVideoUrl ? (
               <video
-                src={video.videoUrl}
+                ref={videoRef}
+                src={resolvedVideoUrl}
                 autoPlay
                 loop
                 muted={isMuted}
                 playsInline
+                onTimeUpdate={() => {
+                  if (videoRef.current) {
+                    setCurrentTimeSec(videoRef.current.currentTime);
+                  }
+                }}
+                onLoadedMetadata={() => {
+                  if (videoRef.current && videoRef.current.duration && !isNaN(videoRef.current.duration)) {
+                    setActualDuration(videoRef.current.duration);
+                  }
+                }}
+                onError={async () => {
+                  console.warn('Playback error with initial URL, attempting to re-resolve via stream proxy...');
+                  try {
+                    const token = await auth.currentUser?.getIdToken();
+                    const streamFallback = `/api/videos/${video.id}/stream?token=${encodeURIComponent(token || '')}`;
+                    setResolvedVideoUrl(streamFallback);
+                  } catch (e) {
+                    console.error('Playback fallback error:', e);
+                  }
+                }}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
                 className="w-full h-full object-cover"
               />
             ) : (
-              <img
-                src={currentScene?.imageUrl || video.thumbnailUrl}
-                alt={video.title}
-                referrerPolicy="no-referrer"
-                className={`w-full h-full object-cover transition-transform duration-1000 ease-out ${
-                  isPlaying ? 'scale-110' : 'scale-100'
-                }`}
-              />
+              <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-slate-900 text-slate-300">
+                <Film className="w-10 h-10 text-slate-500 mb-2" />
+                <p className="text-sm font-semibold text-white">Keine Videodatei verfügbar</p>
+                <p className="text-xs text-slate-400 mt-1">Dieses Video besitzt noch keinen gerenderten MP4-Stream.</p>
+              </div>
             )}
 
             {/* Dark Scrim inside player for readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none" />
 
             {/* Top Bar inside Player */}
             <div className="absolute top-3 left-3 right-3 flex items-center justify-between text-white text-xs z-10 pointer-events-none">
               <span className="font-mono text-[10px] bg-black/60 backdrop-blur-md px-2 py-0.5 rounded text-rose-300 font-semibold flex items-center gap-1">
-                <span>{video.templateName}</span>
-                <span className="text-[9px] text-amber-300">Veo 3.1</span>
+                <span>{video.templateName || 'Veo Video'}</span>
+                <span className="text-[9px] text-amber-300">{video.modelUsed || 'Veo 3.1'}</span>
               </span>
               <span className="font-mono text-[10px] bg-black/60 backdrop-blur-md px-2 py-0.5 rounded text-slate-200">
-                {video.aspectRatio || '9:16'} • Szene {currentSceneIndex + 1}/{scenes.length}
+                {video.aspectRatio || '9:16'}
               </span>
             </div>
 
             {/* Center Play/Pause Overlay indicator */}
             {!isPlaying && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+              <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none">
                 <div className="w-14 h-14 rounded-full bg-rose-600/90 text-white flex items-center justify-center shadow-xl shadow-rose-950/60 transform scale-100">
                   <Play className="w-6 h-6 fill-white ml-1" />
                 </div>
               </div>
             )}
 
-            {/* Dynamic Animated TikTok/Reels Subtitles */}
-            {subtitlesEnabled && currentScene?.spokenText && (
-              <div className="absolute bottom-16 left-4 right-4 text-center pointer-events-none z-10">
-                <div className="inline-block max-w-full bg-black/80 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/10 shadow-2xl">
-                  <div className="text-[11px] text-rose-400 font-bold uppercase tracking-wider mb-0.5">
-                    {currentScene.speaker}
-                  </div>
-                  <div className="text-sm font-extrabold text-white leading-snug">
-                    {currentScene.subtitles && currentScene.subtitles.length > 0 ? (
-                      currentScene.subtitles.map((sub, i) => {
-                        const isCurrentWord = sub.word === activeWord;
-                        return (
-                          <span
-                            key={i}
-                            className={`inline-block mr-1 transition-transform ${
-                              isCurrentWord
-                                ? 'text-amber-300 scale-110 underline decoration-rose-500 decoration-2'
-                                : 'text-white'
-                            }`}
-                          >
-                            {sub.word}
-                          </span>
-                        );
-                      })
-                    ) : (
-                      <span>{currentScene.spokenText}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Right side floating TikTok action badges */}
-            <div className="absolute right-3 bottom-24 flex flex-col items-center gap-3 text-white pointer-events-none">
-              <div className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-xs">
-                ❤️
-              </div>
-              <span className="text-[10px] font-mono font-semibold">14.2k</span>
-              <div className="w-9 h-9 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-xs">
-                💬
-              </div>
-              <span className="text-[10px] font-mono font-semibold">382</span>
-            </div>
-
             {/* Bottom Scrubber Timeline inside player */}
             <div
               onClick={(e) => e.stopPropagation()}
-              className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/95 to-transparent space-y-1.5"
+              className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 to-transparent space-y-1.5"
             >
-              {/* Scene Timeline bars */}
-              <div className="flex gap-1 h-1.5 w-full">
-                {scenes.map((sc, i) => {
-                  const sceneStart = (i / scenes.length) * durationSec;
-                  const sceneEnd = ((i + 1) / scenes.length) * durationSec;
-                  const isPast = currentTimeSec >= sceneEnd;
-                  const isCurrent = currentTimeSec >= sceneStart && currentTimeSec < sceneEnd;
-                  const sceneProgress = isPast
-                    ? 100
-                    : isCurrent
-                    ? ((currentTimeSec - sceneStart) / (sceneEnd - sceneStart)) * 100
-                    : 0;
-
-                  return (
-                    <div
-                      key={i}
-                      onClick={() => handleSeek(sceneStart)}
-                      className="h-full flex-1 bg-white/20 rounded-full overflow-hidden cursor-pointer"
-                      title={`Szene ${i + 1}: ${sc.speaker}`}
-                    >
-                      <div
-                        className="h-full bg-rose-500 transition-all duration-100"
-                        style={{ width: `${sceneProgress}%` }}
-                      />
-                    </div>
-                  );
-                })}
+              {/* Interactive Seek Bar */}
+              <div
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                  handleSeek(pos * durationSec);
+                }}
+                className="h-2 w-full bg-white/20 hover:bg-white/30 rounded-full overflow-hidden cursor-pointer transition-colors relative"
+              >
+                <div
+                  className="h-full bg-rose-500 rounded-full transition-all duration-75"
+                  style={{ width: `${Math.min(100, Math.max(0, (currentTimeSec / (durationSec || 1)) * 100))}%` }}
+                />
               </div>
 
               {/* Time display */}
               <div className="flex items-center justify-between text-[11px] text-slate-300 font-mono">
                 <span>{currentTimeSec.toFixed(1)}s</span>
-                <span>{durationSec}s</span>
+                <span>{durationSec.toFixed(1)}s</span>
               </div>
             </div>
 

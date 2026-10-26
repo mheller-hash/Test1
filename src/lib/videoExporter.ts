@@ -1,4 +1,5 @@
 import { GeneratedVideo } from '../types';
+import { authFetch } from './authFetch';
 
 /**
  * Triggers a browser file download from a Blob or URL
@@ -97,7 +98,8 @@ export function generateScriptContent(video: GeneratedVideo): string {
 /**
  * Downloads the video file:
  * - If video.videoUrl exists (Veo rendered MP4), downloads the real MP4 stream
- * - If only storyboard exists, synthesizes a real video using Canvas + MediaRecorder
+ * - If video.storagePath / storageStatus exists, downloads securely from Firebase Storage stream endpoint
+ * - Fallback to signed URL or streaming proxy
  */
 export async function downloadVideoFile(
   video: GeneratedVideo,
@@ -106,13 +108,18 @@ export async function downloadVideoFile(
   } = {}
 ): Promise<{ format: 'mp4' | 'webm'; filename: string }> {
   const { onProgress } = options;
-  const cleanTitle = (video.title || 'shortscraft_video')
+  const cleanTitle = (video.title || 'veyro_video')
     .replace(/[^a-zA-Z0-9_-]/g, '_')
     .replace(/_+/g, '_')
     .toLowerCase();
 
-  // Mode 1: Real MP4 video URL is present (from Veo 3.1)
-  if (video.videoUrl) {
+  // Reject immediately if video generation failed or no video file / storage path exists
+  if (video.status === 'failed' || (!video.videoUrl && !video.storagePath && video.storageStatus !== 'completed')) {
+    throw new Error('Keine MP4-Videodatei vorhanden. Bitte generiere das Video mit Veo neu.');
+  }
+
+  // Mode 1: Real MP4 video URL is present (from Veo 3.1 or signed URL)
+  if (video.videoUrl && !video.videoUrl.startsWith('/api/')) {
     onProgress?.(20, 'Lade MP4-Videodatei...');
     try {
       const res = await fetch(video.videoUrl);
@@ -128,23 +135,47 @@ export async function downloadVideoFile(
       onProgress?.(100, 'Fertig!');
       return { format: 'mp4', filename };
     } catch (err) {
-      console.warn('Direct blob fetch failed, falling back to direct browser link:', err);
-      // Fallback for strict CORS: direct link download
-      const a = document.createElement('a');
-      a.href = video.videoUrl;
-      a.download = `${cleanTitle}.mp4`;
-      a.target = '_blank';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      onProgress?.(100, 'Fertig!');
-      return { format: 'mp4', filename: `${cleanTitle}.mp4` };
+      console.warn('Direct blob fetch failed, falling back to authenticated storage stream:', err);
     }
   }
 
-  // Mode 2: Client-side video synthesis via Canvas + MediaRecorder
-  onProgress?.(10, 'Initialisiere Video-Renderer...');
-  return await renderVideoFromStoryboard(video, cleanTitle, onProgress);
+  // Mode 2: Download securely from Firebase Storage via backend proxy stream (browser only)
+  if ((video.storagePath || video.storageStatus === 'completed') && typeof window !== 'undefined' && video.id) {
+    onProgress?.(25, 'Rufe gesicherte Videodatei aus Firebase Storage ab...');
+    try {
+      const streamRes = await authFetch(`/api/videos/${video.id}/stream?download=true`);
+      if (streamRes.ok) {
+        onProgress?.(70, 'Empfange Videodaten aus Storage...');
+        const blob = await streamRes.blob();
+        const videoBlob = blob.type.startsWith('video/')
+          ? blob
+          : new Blob([blob], { type: 'video/mp4' });
+        onProgress?.(95, 'Speichere Datei...');
+        const filename = `${cleanTitle}.mp4`;
+        triggerBlobDownload(videoBlob, filename);
+        onProgress?.(100, 'Fertig!');
+        return { format: 'mp4', filename };
+      }
+    } catch (streamErr) {
+      console.warn('Storage stream fetch failed:', streamErr);
+    }
+  }
+
+  // Fallback if videoUrl was present but blob fetch failed
+  if (video.videoUrl && typeof document !== 'undefined') {
+    const a = document.createElement('a');
+    a.href = video.videoUrl;
+    a.download = `${cleanTitle}.mp4`;
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    onProgress?.(100, 'Fertig!');
+    return { format: 'mp4', filename: `${cleanTitle}.mp4` };
+  }
+
+  // If no MP4 video file or storage entry is accessible
+  throw new Error('Keine MP4-Videodatei vorhanden. Bitte generiere das Video mit Veo neu.');
 }
 
 /**

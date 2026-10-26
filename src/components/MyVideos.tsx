@@ -1,13 +1,24 @@
 import React, { useState } from 'react';
-import { Play, Download, Trash2, Clock, Film, Sparkles, Search, Loader2 } from 'lucide-react';
+import { Play, Download, Trash2, Clock, Film, Sparkles, Search, Loader2, HardDrive, RefreshCw, AlertCircle } from 'lucide-react';
 import { GeneratedVideo } from '../types';
 import { downloadVideoFile } from '../lib/videoExporter';
+import { authFetch } from '../lib/authFetch';
+import { getNicheById } from '../data/niches';
+import { getDistinctThumbnail } from '../lib/thumbnailHelper';
 
 interface MyVideosProps {
   videos: GeneratedVideo[];
   onPlayVideo: (video: GeneratedVideo) => void;
   onDeleteVideo: (videoId: string) => void;
   onGoToDiscover: () => void;
+}
+
+function formatFileSize(bytes?: number): string {
+  if (!bytes || bytes <= 0) return '';
+  if (bytes < 1024 * 1024) {
+    return `${(bytes / 1024).toFixed(1)} KB`;
+  }
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 export const MyVideos: React.FC<MyVideosProps> = ({
@@ -19,12 +30,15 @@ export const MyVideos: React.FC<MyVideosProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'generating'>('all');
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [retryingId, setRetryingId] = useState<string | null>(null);
 
   const filteredVideos = videos.filter((vid) => {
     const matchesStatus = statusFilter === 'all' || vid.status === statusFilter;
+    const niche = vid.nicheId ? getNicheById(vid.nicheId) : undefined;
     const matchesSearch =
       vid.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      vid.templateName.toLowerCase().includes(searchQuery.toLowerCase());
+      vid.templateName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (niche ? niche.name.toLowerCase().includes(searchQuery.toLowerCase()) : false);
     return matchesStatus && matchesSearch;
   });
 
@@ -38,6 +52,27 @@ export const MyVideos: React.FC<MyVideosProps> = ({
       console.error('Download failed:', err);
     } finally {
       setDownloadingId(null);
+    }
+  };
+
+  const handleRetryStorage = async (vid: GeneratedVideo, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (retryingId) return;
+    setRetryingId(vid.id);
+    try {
+      const res = await authFetch(`/api/videos/${vid.id}/retry-storage`, {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (data.success) {
+        vid.storageStatus = 'completed';
+        if (data.storagePath) vid.storagePath = data.storagePath;
+        if (data.fileSizeBytes) vid.fileSizeBytes = data.fileSizeBytes;
+      }
+    } catch (err) {
+      console.error('Retry storage failed:', err);
+    } finally {
+      setRetryingId(null);
     }
   };
 
@@ -130,12 +165,19 @@ export const MyVideos: React.FC<MyVideosProps> = ({
               className="group cursor-pointer rounded-2xl bg-white border border-slate-200 overflow-hidden hover:border-rose-400 hover:shadow-xl transition-all flex flex-col shadow-xs"
             >
               {/* Thumbnail (9:16 or 16:9) */}
-              <div className={`relative ${vid.aspectRatio === '16:9' ? 'aspect-video' : 'aspect-[9/16]'} w-full bg-slate-100 overflow-hidden`}>
+              <div className={`relative ${vid.aspectRatio === '16:9' ? 'aspect-video' : 'aspect-[9/16]'} w-full bg-slate-900 overflow-hidden`}>
                 <img
-                  src={vid.thumbnailUrl}
+                  src={
+                    vid.thumbnailUrl && !vid.thumbnailUrl.includes('photo-1618005182384-a83a8bd57fbe')
+                      ? vid.thumbnailUrl
+                      : getDistinctThumbnail(vid.nicheId, vid.id + vid.title)
+                  }
                   alt={vid.title}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = getDistinctThumbnail(vid.nicheId, vid.title);
+                  }}
                 />
 
                 {/* Scrim */}
@@ -159,6 +201,42 @@ export const MyVideos: React.FC<MyVideosProps> = ({
                   </span>
                 </div>
 
+                {/* Storage Status Badge (Top Right) */}
+                <div className="absolute top-3 right-3 flex items-center z-10">
+                  {vid.storageStatus === 'completed' || vid.storagePath ? (
+                    <span
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 backdrop-blur-md shadow-xs"
+                      title={`Dauerhaft in Firebase Storage gesichert (${vid.storagePath || 'videos/' + vid.id + '.mp4'})`}
+                    >
+                      <HardDrive className="w-3 h-3 text-emerald-400" />
+                      <span>Storage</span>
+                      {vid.fileSizeBytes ? <span className="opacity-80">({formatFileSize(vid.fileSizeBytes)})</span> : null}
+                    </span>
+                  ) : vid.storageStatus === 'uploading' ? (
+                    <span
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-amber-950/80 text-amber-300 border border-amber-500/30 backdrop-blur-md shadow-xs"
+                      title="Wird in Firebase Storage hochgeladen..."
+                    >
+                      <Loader2 className="w-3 h-3 animate-spin text-amber-400" />
+                      <span>Speichere...</span>
+                    </span>
+                  ) : vid.storageStatus === 'failed' ? (
+                    <button
+                      onClick={(e) => handleRetryStorage(vid, e)}
+                      disabled={retryingId === vid.id}
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-rose-950/85 text-rose-300 border border-rose-500/40 backdrop-blur-md shadow-xs hover:bg-rose-900 transition-colors cursor-pointer"
+                      title={vid.storageError || "Storage-Upload fehlgeschlagen. Klicken zum Wiederholen."}
+                    >
+                      {retryingId === vid.id ? (
+                        <Loader2 className="w-3 h-3 animate-spin text-rose-300" />
+                      ) : (
+                        <RefreshCw className="w-3 h-3 text-rose-300" />
+                      )}
+                      <span>Storage Retry</span>
+                    </button>
+                  ) : null}
+                </div>
+
                 {/* Duration bottom-left */}
                 <div className="absolute bottom-3 left-3 text-xs font-mono text-slate-200 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-md">
                   <Clock className="w-3.5 h-3.5 text-slate-300" />
@@ -176,8 +254,16 @@ export const MyVideos: React.FC<MyVideosProps> = ({
               {/* Video Card Details */}
               <div className="p-4 flex-1 flex flex-col justify-between">
                 <div>
-                  <div className="text-[11px] font-semibold text-rose-600 mb-1">
-                    {vid.templateName}
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="text-[11px] font-semibold text-rose-600 truncate">
+                      {vid.templateName}
+                    </span>
+                    {vid.nicheId && (
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
+                        <span>{getNicheById(vid.nicheId).icon}</span>
+                        <span>{getNicheById(vid.nicheId).name}</span>
+                      </span>
+                    )}
                   </div>
                   <h3 className="font-bold text-slate-900 text-sm line-clamp-2 group-hover:text-rose-600 transition-colors">
                     {vid.title}
